@@ -1,4 +1,4 @@
-package Pirate;
+package pirate;
 
 public enum Role {
     Second,

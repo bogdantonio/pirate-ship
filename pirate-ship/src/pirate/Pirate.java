@@ -1,4 +1,4 @@
-package Pirate;
+package pirate;
 
 public abstract class Pirate {
     public int pirateId;
