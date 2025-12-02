@@ -106,30 +106,30 @@ public abstract class Pirate {
         this.willpower = willpower;
     }
 
-    public void validatePirateData(Pirate pirate) throws Exception{
-        if(pirate.getPirateId() < 0){
+    public void validatePirateData() throws Exception{
+        if(pirateId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
-        if(pirate.getName().length() < 5){
+        if(name.length() < 3){
             throw new InvalidDataException("Invalid data for name: too few characters! The name must have at least 5 characters!");
         }
 
-        if(pirate.getStrength() < 10 || pirate.getStrength() > 100){
+        if(strength < 10 || strength > 100){
             throw new InvalidDataException("Invalid data for strength: the value must be between 10 and 100!");
         }
-        if(pirate.getAgility() < 10 || pirate.getAgility() > 100){
+        if(agility < 10 || agility > 100){
             throw new InvalidDataException("Invalid data for agility: the value must be between 10 and 100!");
         }
-        if(pirate.getEndurance() < 10 || pirate.getEndurance() > 100){
+        if(endurance < 10 || endurance > 100){
             throw new InvalidDataException("Invalid data for endurance: the value must be between 10 and 100!");
         }
-        if(pirate.getIntelligence() < 10 || pirate.getIntelligence() > 100){
+        if(intelligence < 10 || intelligence > 100){
             throw new InvalidDataException("Invalid data for intelligence: the value must be between 10 and 100!");
         }
-        if(pirate.getCharisma() < 10 || pirate.getCharisma() > 100) {
+        if(charisma < 10 || charisma > 100) {
             throw new InvalidDataException("Invalid data for charisma: the value must be between 10 and 100!");
         }
-        if(pirate.getWillpower() < 10 || pirate.getWillpower() > 100){
+        if(willpower < 10 || willpower > 100){
             throw new InvalidDataException("Invalid data for willpower: the value must be between 10 and 100!");
         }
     }

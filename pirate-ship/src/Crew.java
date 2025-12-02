@@ -1,11 +1,11 @@
 import java.util.EnumMap;
 import pirate.*;
-import pirateSubclasses.*;
 
 public class Crew {
     public int crewId;
     public String crewName;
     public String captain;
+    private double crewPower;
     // map the pirate to the enum type since I want one of each pirate subclass
     public EnumMap<Role, Pirate> crewMembers;
 
@@ -14,6 +14,7 @@ public class Crew {
         this.crewName = crewName;
         this.captain = captain;
         this.crewMembers = new EnumMap<>(Role.class);
+        this.crewPower = 0;
     }
 
     public int getCrewId(){
@@ -47,10 +48,27 @@ public class Crew {
             throw new ExistingRoleException("A pirate with the role " + " already exists in the crew!");
         }
         crewMembers.put(role, pirate);
+        this.crewPower = setCrewPower();
     }
 
     public Pirate getPirate(Role role){
         return crewMembers.get(role);
+    }
+
+    public double setCrewPower(){
+        double cumulativePower = 0;
+        for (Pirate p : crewMembers.values()) {
+            // the average of the stats for a pirate
+            double avg = (p.getStrength() + p.getAgility() + p.getEndurance() +
+                    p.getIntelligence() + p.getCharisma() + p.getWillpower()) / 6.0;
+            cumulativePower += avg;
+        }
+        // make the average for the whole crew
+        return cumulativePower/crewMembers.size();
+    }
+
+    public double getCrewPower(){
+        return this.crewPower;
     }
 
     public boolean fullCrew(){
@@ -60,8 +78,8 @@ public class Crew {
     public void printCrew(){
         System.out.println(getCrewName());
         System.out.println("Captain: " + getCaptain());
-        for(int i = 0; i < Role.values().length; i++){
-            System.out.println(Role.values()[i].toString() + ": " + getPirate(Role.values()[i]).getName());
+        for(int i = 0; i < crewMembers.size(); i++){
+            System.out.println(Role.values()[i] + ": " + getPirate(Role.values()[i]).getName());
         }
     }
 
@@ -70,8 +88,11 @@ public class Crew {
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
 
-        if(captain.length() < 5){
+        if(captain.length() < 3){
             throw new InvalidDataException("Invalid data for captain: too few characters! The captain must have at least 5 characters!");
+        }
+        if(crewName.length() < 5){
+            throw new InvalidDataException("Invalid data for crewName: too few characters! The crewName must have at least 5 characters!");
         }
     }
 
