@@ -1,33 +1,24 @@
 package pirate;
 
 public abstract class Pirate {
-    public int pirateId;
-    public String name;
-    public String alias;
-    public Role role;
-    public int strength;
-    public int agility;
-    public int endurance;
-    public int intelligence;
-    public int charisma;
-    public int willpower;
+    private int pirateId;
+    private String name;
+    private String alias;
+    private Role role;
+    private String sex;
+    private PirateStatSet pirateStatSet;
 
-    public Pirate(int pirateId, String name, String alias, Role role,
-                  int strength, int agility, int endurance,int intelligence, int charisma, int willpower){
+    public Pirate(int pirateId, Role role, String alias, String name, String sex, PirateStatSet pirateStatSet) {
         this.pirateId = pirateId;
-        this.name = name;
-        this.alias = alias;
         this.role = role;
-        this.strength = strength;
-        this.agility = agility;
-        this.endurance = endurance;
-        this.intelligence = intelligence;
-        this.charisma = charisma;
-        this.willpower = willpower;
+        this.alias = alias;
+        this.name = name;
+        this.sex = sex;
+        this.pirateStatSet = pirateStatSet;
     }
 
     public int getPirateId(){
-        return pirateId;
+        return this.pirateId;
     }
 
     public void setPirateId(int pirateId){
@@ -35,7 +26,7 @@ public abstract class Pirate {
     }
 
     public String getName(){
-        return name;
+        return this.name;
     }
 
     public void setName(String name){
@@ -43,7 +34,7 @@ public abstract class Pirate {
     }
 
     public String getAlias(){
-        return alias;
+        return this.alias;
     }
 
     public void setAlias(String alias){
@@ -51,88 +42,46 @@ public abstract class Pirate {
     }
 
     public Role getRole(){
-        return role;
+        return this.role;
     }
 
     public void setRole(Role role){
         this.role = role;
     }
 
-    public int getStrength(){
-        return strength;
+    public String getSex() {
+        return this.sex;
     }
 
-    public void setStrength(int strength){
-        this.strength = strength;
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
-    public int getAgility(){
-        return agility;
+    public PirateStatSet getPirateStatSet() {
+        return this.pirateStatSet;
     }
 
-    public void setAgility(int agility){
-        this.agility = agility;
-    }
-
-    public int getEndurance(){
-        return endurance;
-    }
-
-    public void setEndurance(int endurance){
-        this.endurance = endurance;
-    }
-
-    public int getIntelligence(){
-        return intelligence;
-    }
-
-    public void setIntelligence(int intelligence){
-        this.intelligence = intelligence;
-    }
-
-    public int getCharisma(){
-        return charisma;
-    }
-
-    public void setCharisma(int charisma){
-        this.charisma = charisma;
-    }
-
-    public int getWillpower(){
-        return willpower;
-    }
-
-    public void setWillpower(int willpower){
-        this.willpower = willpower;
+    public void setPirateStatSet(PirateStatSet pirateStatSet) {
+        this.pirateStatSet = pirateStatSet;
     }
 
     public void validatePirateData() throws Exception{
-        if(pirateId < 0){
-            throw new InvalidDataException("Invalid data for id: null values not supported!");
+        if(this.pirateId < 0){
+            throw new InvalidDataException("Invalid data for pirateId: null values not supported!");
         }
-        if(name.length() < 3){
-            throw new InvalidDataException("Invalid data for name: too few characters! The name must have at least 5 characters!");
+        this.pirateStatSet.validateStatData();
+
+        if(this.name.length() < 3){
+            throw new InvalidDataException("Invalid data for name: the length must have more than 3 characters!");
+        }
+        if(this.sex.length() > 1){
+            throw new InvalidDataException("Invalid data for sex: the length must have 1 character: M/F!");
         }
 
-        if(strength < 10 || strength > 100){
-            throw new InvalidDataException("Invalid data for strength: the value must be between 10 and 100!");
-        }
-        if(agility < 10 || agility > 100){
-            throw new InvalidDataException("Invalid data for agility: the value must be between 10 and 100!");
-        }
-        if(endurance < 10 || endurance > 100){
-            throw new InvalidDataException("Invalid data for endurance: the value must be between 10 and 100!");
-        }
-        if(intelligence < 10 || intelligence > 100){
-            throw new InvalidDataException("Invalid data for intelligence: the value must be between 10 and 100!");
-        }
-        if(charisma < 10 || charisma > 100) {
-            throw new InvalidDataException("Invalid data for charisma: the value must be between 10 and 100!");
-        }
-        if(willpower < 10 || willpower > 100){
-            throw new InvalidDataException("Invalid data for willpower: the value must be between 10 and 100!");
-        }
+        // role is already of type Role so it is not point in checking for it;
+        // also no point in checking for alias since it is an optional field: it might as well be NULL
     }
 
     public abstract void validateSubclassData() throws Exception;
+
 }

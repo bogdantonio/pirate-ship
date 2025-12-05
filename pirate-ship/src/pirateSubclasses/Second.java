@@ -1,70 +1,69 @@
 package pirateSubclasses;
 import pirate.Pirate;
+import pirate.PirateStatSet;
 import pirate.Role;
 import pirate.InvalidDataException;
 
 public class Second extends Pirate{
-    public int secondId;
-    public int leadership;
-    public int tactics;
-    public int moraleBoost;
+    private int secondId;
+    private int leadership;
+    private int tactics;
+    private int moraleBoost;
 
-    public Second(int pirateId, String name, String alias, Role role,
-                  int strength, int agility, int endurance,int intelligence, int charisma, int willpower,
-                  int secondId, int leadership, int tactics, int moraleBoost){
-
-        super(pirateId, name, alias, role, strength, agility, endurance, intelligence, charisma, willpower);
+    public Second(int pirateId, Role role, String alias, String name, String sex, PirateStatSet pirateStatSet,
+                  int secondId, int leadership, int tactics, int moraleBoost) {
+        super(pirateId, role, alias, name, sex, pirateStatSet);
         this.secondId = secondId;
         this.leadership = leadership;
         this.tactics = tactics;
         this.moraleBoost = moraleBoost;
     }
 
-    public int getSecondId(){
+    public int getSecondId() {
         return secondId;
     }
 
-    public void setSecondId(int secondId){
+    public void setSecondId(int secondId) {
         this.secondId = secondId;
     }
 
-    public int getLeadership(){
+    public int getLeadership() {
         return leadership;
     }
 
-    public void setLeadership(int leadership){
+    public void setLeadership(int leadership) {
         this.leadership = leadership;
     }
 
-    public int getTactics(){
+    public int getTactics() {
         return tactics;
     }
 
-    public void setTactics(int tactics){
+    public void setTactics(int tactics) {
         this.tactics = tactics;
     }
 
-    public int getMoraleBoost(){
+    public int getMoraleBoost() {
         return moraleBoost;
     }
 
-    public void setMoraleBoost(int moraleBoost){
+    public void setMoraleBoost(int moraleBoost) {
         this.moraleBoost = moraleBoost;
     }
 
     @Override
     public void validateSubclassData() throws Exception {
-        if(secondId < 0){
+        if(this.secondId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
 
-        if(leadership < 10 || leadership > 100){
+        if(this.leadership < 10 || this.leadership > 100){
             throw new InvalidDataException("Invalid data for leadership: the value must be between 10 and 100!");
         }
-        if(tactics< 10 || tactics > 100){
+        if(this.tactics< 10 || this.tactics > 100){
             throw new InvalidDataException("Invalid data for tactics: the value must be between 10 and 100!");
         }
-        if(moraleBoost < 10 || moraleBoost > 100){
+        if(this.moraleBoost < 10 || this.moraleBoost > 100){
             throw new InvalidDataException("Invalid data for moraleBoost: the value must be between 10 and 100!");
         }
     }

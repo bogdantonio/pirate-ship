@@ -1,13 +1,13 @@
 package pirate;
 
 public enum Role {
-    Second,
-    Navigator,
-    Sniper,
-    Cook,
-    Doctor,
-    Archeologist,
-    Shipwright,
-    Musician,
-    Helmsman
+    SECOND,
+    NAVIGATOR,
+    SNIPER,
+    COOK,
+    DOCTOR,
+    ARCHEOLOGIST,
+    SHIPWRIGHT,
+    MUSICIAN,
+    HELMSMAN
 }

@@ -1,70 +1,69 @@
 package pirateSubclasses;
 import pirate.Pirate;
+import pirate.PirateStatSet;
 import pirate.Role;
 import pirate.InvalidDataException;
 
 public class Cook extends Pirate{
-    public int cookId;
-    public int cooking;
-    public int mealQuality;
-    public int moraleImpact;
+    private int cookId;
+    private int cooking;
+    private int mealQuality;
+    private int moraleImpact;
 
-    public Cook(int pirateId, String name, String alias, Role role,
-                      int strength, int agility, int endurance,int intelligence, int charisma, int willpower,
-                      int cookId, int cooking, int mealQuality, int moraleImpact){
-
-        super(pirateId, name, alias, role, strength, agility, endurance, intelligence, charisma, willpower);
+    public Cook(int pirateId, Role role, String alias, String name, String sex, PirateStatSet pirateStatSet,
+                int moraleImpact, int cookId, int cooking, int mealQuality) {
+        super(pirateId, role, alias, name, sex, pirateStatSet);
+        this.moraleImpact = moraleImpact;
         this.cookId = cookId;
         this.cooking = cooking;
         this.mealQuality = mealQuality;
-        this.moraleImpact = moraleImpact;
     }
 
-    public int getCookId(){
+    public int getCookId() {
         return cookId;
     }
 
-    public void setCookId(int cookId){
+    public void setCookId(int cookId) {
         this.cookId = cookId;
     }
 
-    public int getCooking(){
+    public int getCooking() {
         return cooking;
     }
 
-    public void setCooking(int cooking){
+    public void setCooking(int cooking) {
         this.cooking = cooking;
     }
 
-    public int getMealQuality(){
+    public int getMealQuality() {
         return mealQuality;
     }
 
-    public void setMealQuality(int mealQuality){
+    public void setMealQuality(int mealQuality) {
         this.mealQuality = mealQuality;
     }
 
-    public int getMoraleImpact(){
+    public int getMoraleImpact() {
         return moraleImpact;
     }
 
-    public void setMoraleImpact(int moraleImpact){
+    public void setMoraleImpact(int moraleImpact) {
         this.moraleImpact = moraleImpact;
     }
 
     @Override
     public void validateSubclassData() throws Exception {
-        if(cookId < 0){
+        if(this.cookId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
 
-        if(cooking < 10 || cooking > 100){
+        if(this.cooking < 10 || this.cooking > 100){
             throw new InvalidDataException("Invalid data for cooking: the value must be between 10 and 100!");
         }
-        if(mealQuality< 10 || mealQuality > 100){
+        if(this.mealQuality< 10 || this.mealQuality > 100){
             throw new InvalidDataException("Invalid data for mealQuality: the value must be between 10 and 100!");
         }
-        if(moraleImpact < 10 || moraleImpact > 100){
+        if(this.moraleImpact < 10 || this.moraleImpact > 100){
             throw new InvalidDataException("Invalid data for moraleImpact: the value must be between 10 and 100!");
         }
     }

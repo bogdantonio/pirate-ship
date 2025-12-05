@@ -1,70 +1,69 @@
 package pirateSubclasses;
 import pirate.Pirate;
+import pirate.PirateStatSet;
 import pirate.Role;
 import pirate.InvalidDataException;
 
 public class Archeologist extends Pirate{
-    public int archeologistId;
-    public int artifactKnowledge;
-    public int digging;
-    public int trapDetection;
+    private int archeologistId;
+    private int artifactKnowledge;
+    private int digging;
+    private int trapDetection;
 
-    public Archeologist(int pirateId, String name, String alias, Role role,
-                  int strength, int agility, int endurance,int intelligence, int charisma, int willpower,
-                  int archeologistId, int artifactKnowledge, int digging, int trapDetection){
-
-        super(pirateId, name, alias, role, strength, agility, endurance, intelligence, charisma, willpower);
+    public Archeologist(int pirateId, Role role, String alias, String name, String sex, PirateStatSet pirateStatSet,
+                        int archeologistId, int trapDetection, int digging, int artifactKnowledge) {
+        super(pirateId, role, alias, name, sex, pirateStatSet);
         this.archeologistId = archeologistId;
-        this.artifactKnowledge = artifactKnowledge;
-        this.digging = digging;
         this.trapDetection = trapDetection;
+        this.digging = digging;
+        this.artifactKnowledge = artifactKnowledge;
     }
 
-    public int getArcheologistId(){
+    public int getArcheologistId() {
         return archeologistId;
     }
 
-    public void setArcheologistId(int archeologistId){
+    public void setArcheologistId(int archeologistId) {
         this.archeologistId = archeologistId;
     }
 
-    public int getArtifactKnowledge(){
+    public int getArtifactKnowledge() {
         return artifactKnowledge;
     }
 
-    public void setArtifactKnowledge(int artifactKnowledge){
+    public void setArtifactKnowledge(int artifactKnowledge) {
         this.artifactKnowledge = artifactKnowledge;
     }
 
-    public int getDigging(){
+    public int getDigging() {
         return digging;
     }
 
-    public void setDigging(int digging){
+    public void setDigging(int digging) {
         this.digging = digging;
     }
 
-    public int getTrapDetection(){
+    public int getTrapDetection() {
         return trapDetection;
     }
 
-    public void setTrapDetection(int trapDetection){
+    public void setTrapDetection(int trapDetection) {
         this.trapDetection = trapDetection;
     }
 
     @Override
     public void validateSubclassData() throws Exception {
-        if(archeologistId < 0){
+        if(this.archeologistId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
 
-        if(artifactKnowledge < 10 || artifactKnowledge > 100){
+        if(this.artifactKnowledge < 10 || this.artifactKnowledge > 100){
             throw new InvalidDataException("Invalid data for artifactKnowledge: the value must be between 10 and 100!");
         }
-        if(digging< 10 || digging > 100){
+        if(this.digging< 10 || this.digging > 100){
             throw new InvalidDataException("Invalid data for digging: the value must be between 10 and 100!");
         }
-        if(trapDetection < 10 || trapDetection > 100){
+        if(this.trapDetection < 10 || this.trapDetection > 100){
             throw new InvalidDataException("Invalid data for trapDetection: the value must be between 10 and 100!");
         }
     }

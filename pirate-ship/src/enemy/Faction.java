@@ -1,11 +1,12 @@
 package enemy;
 
 public enum Faction {
-    Marines,
-    Pirates,
-    BountyHunters,
-    Samurai,
-    Furries,
-    WorldGovernment
+    UNAFFILIATED,
+    MARINES,
+    PIRATES,
+    BOUNTY_HUNTERS,
+    SAMURAI,
+    FURRIES,
+    WORLD_GOVERNMENT
 }
 
