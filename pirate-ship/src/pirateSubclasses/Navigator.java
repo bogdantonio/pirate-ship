@@ -56,6 +56,7 @@ public class Navigator extends Pirate{
         if(this.navigatorId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.navigation < 10 || this.navigation > 100){
             throw new InvalidDataException("Invalid data for navigation: the value must be between 10 and 100!");

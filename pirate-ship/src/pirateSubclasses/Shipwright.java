@@ -56,6 +56,7 @@ public class Shipwright extends Pirate{
         if(this.shipwrightId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.repair < 10 || this.repair > 100){
             throw new InvalidDataException("Invalid data for repair: the value must be between 10 and 100!");

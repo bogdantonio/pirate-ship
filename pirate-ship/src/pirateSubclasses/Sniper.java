@@ -56,6 +56,7 @@ public class Sniper extends Pirate {
         if(this.sniperId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.accuracy < 10 || this.accuracy > 100){
             throw new InvalidDataException("Invalid data for accuracy: the value must be between 10 and 100!");

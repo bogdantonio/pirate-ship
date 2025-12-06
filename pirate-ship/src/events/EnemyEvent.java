@@ -1,15 +1,25 @@
 package events;
 
 import enemy.Enemy;
-import crew.Crew;
+import pirate.InvalidDataException;
 
-public class EnemyEvent {
-    public String prompt;
+public class EnemyEvent implements EventInterface {
+    private int enemyEventId;
+    private String prompt;
     private Enemy enemy;
 
-    public EnemyEvent(Enemy enemy, Crew crew, String prompt) {
-        this.enemy = enemy;
+    public EnemyEvent(int enemyEventId, String prompt, Enemy enemy) {
+        this.enemyEventId = enemyEventId;
         this.prompt = prompt;
+        this.enemy = enemy;
+    }
+
+    public int getEnemyEventId() {
+        return enemyEventId;
+    }
+
+    public void setEnemyEventId(int enemyEventId) {
+        this.enemyEventId = enemyEventId;
     }
 
     public String getPrompt() {
@@ -26,6 +36,23 @@ public class EnemyEvent {
 
     public void setEnemy(Enemy enemy) {
         this.enemy = enemy;
+    }
+
+    @Override
+    public void printPrompt() {
+        System.out.println(this.prompt);
+    }
+
+    @Override
+    public void validateEventData() throws Exception {
+        if(this.enemyEventId < 0){
+            throw new InvalidDataException("Invalid data for id: null values not supported!");
+        }
+
+        if(this.prompt.length() < 32){
+            throw new InvalidDataException("Invalid data for prompt: the length of the prompt must be at least 32 characters!");
+        }
+        this.enemy.validateEnemyData();
     }
 
 }

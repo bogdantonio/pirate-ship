@@ -56,6 +56,7 @@ public class Doctor extends Pirate{
         if(this.doctorId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.medicalAbility < 10 || this.medicalAbility > 100){
             throw new InvalidDataException("Invalid data for medicalAbility: the value must be between 10 and 100!");

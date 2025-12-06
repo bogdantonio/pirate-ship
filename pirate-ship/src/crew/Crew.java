@@ -4,7 +4,9 @@ import pirate.InvalidDataException;
 import pirate.Pirate;
 import pirate.PirateStatSet;
 import pirate.Role;
+import pirateSubclasses.*;
 
+import java.security.PublicKey;
 import java.util.EnumMap;
 
 public class Crew {
@@ -99,6 +101,42 @@ public class Crew {
         for(int i = 0; i < crewMembers.size(); i++){
             System.out.println(Role.values()[i] + ": " + getPirate(Role.values()[i]).getName());
         }
+    }
+
+    public Second getSecond(){
+        return (Second) crewMembers.get(Role.SECOND);
+    }
+
+    public Navigator getNavigator(){
+        return (Navigator) crewMembers.get(Role.NAVIGATOR);
+    }
+
+    public Sniper getSniper(){
+        return (Sniper) crewMembers.get(Role.SNIPER);
+    }
+
+    public Cook getCook(){
+        return (Cook) crewMembers.get(Role.COOK);
+    }
+
+    public Doctor getDoctor(){
+        return (Doctor) crewMembers.get(Role.DOCTOR);
+    }
+
+    public Archeologist getArcheologist(){
+        return (Archeologist) crewMembers.get(Role.ARCHEOLOGIST);
+    }
+
+    public Shipwright getShipwright(){
+        return (Shipwright) crewMembers.get(Role.SHIPWRIGHT);
+    }
+
+    public Musician getMusician(){
+        return (Musician) crewMembers.get(Role.MUSICIAN);
+    }
+
+    public Helmsman getHelmsman(){
+        return (Helmsman) crewMembers.get(Role.HELMSMAN);
     }
 
     public void validateCrewData() throws Exception{

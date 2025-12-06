@@ -56,6 +56,7 @@ public class Musician extends Pirate{
         if(this.musicianId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.music < 10 || this.music > 100){
             throw new InvalidDataException("Invalid data for music: the value must be between 10 and 100!");

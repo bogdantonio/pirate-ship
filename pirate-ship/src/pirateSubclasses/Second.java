@@ -56,6 +56,7 @@ public class Second extends Pirate{
         if(this.secondId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.leadership < 10 || this.leadership > 100){
             throw new InvalidDataException("Invalid data for leadership: the value must be between 10 and 100!");

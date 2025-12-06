@@ -56,6 +56,7 @@ public class Cook extends Pirate{
         if(this.cookId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.cooking < 10 || this.cooking > 100){
             throw new InvalidDataException("Invalid data for cooking: the value must be between 10 and 100!");

@@ -56,6 +56,7 @@ public class Archeologist extends Pirate{
         if(this.archeologistId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.artifactKnowledge < 10 || this.artifactKnowledge > 100){
             throw new InvalidDataException("Invalid data for artifactKnowledge: the value must be between 10 and 100!");

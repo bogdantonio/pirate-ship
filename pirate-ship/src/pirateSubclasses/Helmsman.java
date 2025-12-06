@@ -57,6 +57,7 @@ public class Helmsman extends Pirate{
         if(this.helmsmanId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
+        super.validatePirateData();
 
         if(this.maneuvering < 10 || this.maneuvering > 100){
             throw new InvalidDataException("Invalid data for maneuvering: the value must be between 10 and 100!");
