@@ -52,6 +52,14 @@ public class Cook extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Cooking: " + cooking);
+        System.out.println("Meal Quality: " + mealQuality);
+        System.out.println("Morale Impact: " + moraleImpact);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.cookId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

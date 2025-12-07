@@ -53,6 +53,14 @@ public class Helmsman extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Maneuvering: " + maneuvering);
+        System.out.println("Precision: " + precision);
+        System.out.println("Storm Riding: " + stormRiding);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.helmsmanId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

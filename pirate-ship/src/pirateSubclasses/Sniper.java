@@ -52,6 +52,14 @@ public class Sniper extends Pirate {
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Weapon Range: " + weaponRange);
+        System.out.println("Accuracy: " + accuracy);
+        System.out.println("Critical Chance: " + criticalChance);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.sniperId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

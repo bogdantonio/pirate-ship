@@ -6,6 +6,8 @@ import events.PirateSubclassEvent;
 
 import java.util.ArrayList;
 
+import java.util.Scanner;
+
 public class Adventure {
     private int adventureId;
     private EventSet eventSet;
@@ -121,12 +123,31 @@ public class Adventure {
     }
 
     public void runAdventure() throws Exception {
+        Scanner input = new Scanner(System.in);
+
         ArrayList<Event> eventsSet = eventSet.getEventSet();
         int successfulE = 0;
         int failedE = 0;
 
         for(Event event : eventsSet){
-            // TODO: implement so that on keyboard press the next iteration happens and on another key abort the mission
+            String cmd = "";
+            System.out.println("Commands: ");
+            while(true){
+                System.out.println("p: proceed to the next event!");
+                System.out.println("q: abort the adventure!");
+                cmd = input.next();
+
+                if(cmd.equals("p") || cmd.equals("q")) break;
+
+                System.out.println("Invalid command! Type 'p' or 'q'.");
+            }
+
+            if(cmd.equals("q")){
+                System.out.println("\nAdventure aborted!");
+                System.out.println("Successful events: " + successfulE);
+                System.out.println("Failed events: " + failedE);
+                return;
+            }
 
             if(runEvent(event)){
                 successfulE++;
@@ -134,9 +155,12 @@ public class Adventure {
             else{
                 failedE++;
                 if(failedE >= 3){
-                    System.out.println("Lost at sea! Too many events failed!");
-                    break;
+                    System.out.println("\nLost at sea! Too many events failed!");
+                    System.out.println("Successful events: " + successfulE);
+                    System.out.println("Failed events: " + failedE);
+                    return;
                 }
+
             }
         }
 

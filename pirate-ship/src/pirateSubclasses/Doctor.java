@@ -52,6 +52,14 @@ public class Doctor extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Diagnosis: " + diagnosis);
+        System.out.println("Healing Speed: " + healingSpeed);
+        System.out.println("Medical Ability: " + medicalAbility);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.doctorId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

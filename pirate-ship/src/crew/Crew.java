@@ -13,15 +13,25 @@ public class Crew {
     private int crewId;
     private String crewName;
     private String captain;
+    private String captainAlias;
     private double crewPower; // updated each time a new crew member is introduced
     // map the pirate to the enum type since I want one of each pirate subclass
     private EnumMap<Role, Pirate> crewMembers;
 
-    public Crew(int crewId, String crewName, String captain, EnumMap<Role, Pirate> crewMembers) {
+    public Crew(int crewId, String crewName, String captain, EnumMap<Role, Pirate> crewMembers, String captainAlias) {
         this.crewId = crewId;
         this.crewName = crewName;
+        this.captainAlias = captainAlias;
         this.captain = captain;
         this.crewMembers = new EnumMap<>(Role.class);
+    }
+
+    public String getCaptainAlias() {
+        return captainAlias;
+    }
+
+    public void setCaptainAlias(String captainAlias) {
+        this.captainAlias = captainAlias;
     }
 
     public int getCrewId() {
@@ -96,10 +106,10 @@ public class Crew {
     }
 
     public void printCrew(){
-        System.out.println(getCrewName());
-        System.out.println("Captain: " + getCaptain());
+        System.out.println("\n===============/ " + getCrewName() + " /===============");
+        System.out.println("CAPTAIN: " + getCaptain() + " \"" + getCaptainAlias() + "\"");
         for(int i = 0; i < crewMembers.size(); i++){
-            System.out.println(Role.values()[i] + ": " + getPirate(Role.values()[i]).getName());
+            System.out.println(Role.values()[i] + ": " + getPirate(Role.values()[i]).getName() + " \"" + getPirate(Role.values()[i]).getAlias() + "\"");
         }
     }
 

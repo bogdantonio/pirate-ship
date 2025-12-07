@@ -52,6 +52,14 @@ public class Shipwright extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Materials: " + materials);
+        System.out.println("Repair: " + repair);
+        System.out.println("Construction: " + construction);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.shipwrightId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

@@ -52,6 +52,14 @@ public class Second extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Leadership: " + leadership);
+        System.out.println("Tactics: " + tactics);
+        System.out.println("Morale Boost: " + moraleBoost);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.secondId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

@@ -65,6 +65,16 @@ public abstract class Pirate {
         this.pirateStatSet = pirateStatSet;
     }
 
+    public void printPirateStats(){
+        System.out.println(name + " \"" + alias + "\"");
+        System.out.println("Strength: " + getPirateStatSet().getStrength());
+        System.out.println("Agility: " + getPirateStatSet().getAgility());
+        System.out.println("Endurance: " + getPirateStatSet().getEndurance());
+        System.out.println("Intelligence: " + getPirateStatSet().getIntelligence());
+        System.out.println("Charisma: " + getPirateStatSet().getCharisma());
+        System.out.println("Willpower: " + getPirateStatSet().getWillpower());
+    }
+
     public void validatePirateData() throws Exception{
         if(this.pirateId < 0){
             throw new InvalidDataException("Invalid data for pirateId: null values not supported!");
@@ -82,6 +92,7 @@ public abstract class Pirate {
         // also no point in checking for alias since it is an optional field: it might as well be NULL
     }
 
+    public abstract void printSubclassStats();
     public abstract void validateSubclassData() throws Exception;
 
 }

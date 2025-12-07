@@ -52,6 +52,14 @@ public class Navigator extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Navigation: " + navigation);
+        System.out.println("Weather Prediction: " + weatherPrediction);
+        System.out.println("Map Reading: " + mapReading);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.navigatorId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

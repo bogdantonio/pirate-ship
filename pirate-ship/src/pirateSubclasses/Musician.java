@@ -52,6 +52,14 @@ public class Musician extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Music: " + music);
+        System.out.println("Inspiration: " + inspiration);
+        System.out.println("Buff Strength: " + buffStrength);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.musicianId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

@@ -29,6 +29,13 @@ public class EventSet {
         this.eventSet = eventSet;
     }
 
+    public void printEvents(){
+        for(Event event: eventSet){
+            event.printEvent();
+            System.out.println();
+        }
+    }
+
     public void validateEventSetData() throws Exception {
         if(this.eventSetId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
@@ -42,9 +49,6 @@ public class EventSet {
         }
 
         for(Event event: eventSet){
-            if(event == null){
-                throw new InvalidDataException("Event list contains a null event!");
-            }
             event.validateEventData();
         }
     }

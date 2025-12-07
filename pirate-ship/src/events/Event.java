@@ -47,11 +47,33 @@ public class Event {
         this.pirateSubclassEvent = pirateSubclassEvent;
     }
 
+    public void printEvent(){
+        if(eventType == EventType.ENEMY){
+            enemyEvent.printPrompt();
+            System.out.println("Enemy: " + enemyEvent.getEnemy().getName() + " | Faction: " +
+                    enemyEvent.getEnemy().getFaction() + " | Power: " + enemyEvent.getEnemy().getPower());
+        }
+        else if (eventType == EventType.SUBCLASS){
+            pirateSubclassEvent.printPrompt();
+            System.out.println("Subclass: " + pirateSubclassEvent.getSubclass() + " | Required Stat 1: " + pirateSubclassEvent.getReqStat1()
+                    + " | Required Stat 2: " + pirateSubclassEvent.getReqStat2()
+                    + " | Required Stat 3: " + pirateSubclassEvent.getReqStat3());
+        }
+    }
+
     public void validateEventData() throws Exception {
         if(this.eventId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
         }
-        this.enemyEvent.validateEventData();
-        this.pirateSubclassEvent.validateEventData();
+
+        if(this.enemyEvent != null){
+            this.enemyEvent.validateEventData();
+        }
+        if(this.pirateSubclassEvent != null){
+            this.pirateSubclassEvent.validateEventData();
+        }
+        if(this.enemyEvent == null && pirateSubclassEvent == null){
+            throw new InvalidDataException("Invalid data: enemyEvent and pirateSubclassEvent can't be both null!");
+        }
     }
 }

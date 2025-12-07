@@ -10,7 +10,7 @@ import pirateSubclasses.*;
 public class CrewDemo {
     public static void main(String[] args) throws Exception {
         EnumMap<Role, Pirate> crewMembers = new EnumMap<>(Role.class);
-        Crew myCrew = new Crew(1, "The Strawhats", "Luffy",  crewMembers);
+        Crew myCrew = new Crew(1, "The Strawhats", "Luffy",  crewMembers, "Mugiwara");
         myCrew.validateCrewData();
 
         PirateStatSet pirateStatSet1 = new PirateStatSet(1, 88, 89, 88, 82, 78, 90);

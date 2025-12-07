@@ -52,6 +52,14 @@ public class Archeologist extends Pirate{
     }
 
     @Override
+    public void printSubclassStats() {
+        super.printPirateStats();
+        System.out.println("Artifact Knowledge: " + artifactKnowledge);
+        System.out.println("Digging: " + digging);
+        System.out.println("Trap Detection: " + trapDetection);
+    }
+
+    @Override
     public void validateSubclassData() throws Exception {
         if(this.archeologistId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");
