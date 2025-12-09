@@ -67,6 +67,10 @@ public class Enemy {
         this.sex = sex;
     }
 
+    public void printEnemy(){
+        System.out.println("Enemy: " + this.name + " \"" + this.alias +"\"" + " | " + this.faction + " | Power: " + this.power);
+    }
+
     public void validateEnemyData() throws Exception {
         if (this.enemyId < 0){
             throw new InvalidDataException("Invalid data for id: null values not supported!");

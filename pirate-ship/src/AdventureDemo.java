@@ -188,11 +188,11 @@ public class AdventureDemo {
         Scanner input = new Scanner(System.in);
         EnumMap<Role, Pirate> crewMembers = new EnumMap<>(Role.class);
         System.out.println("What is your name, captain?");
-        String captain = input.next();
+        String captain = input.nextLine();
         System.out.println("And what is your alias?");
-        String alias = input.next();
+        String alias = input.nextLine();
         System.out.println("How should we name our pirate crew?");
-        String crewName = input.next();
+        String crewName = input.nextLine();
         Crew myCrew = new Crew(1, crewName, captain, crewMembers, alias);
         myCrew.validateCrewData();
 

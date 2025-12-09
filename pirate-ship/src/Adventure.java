@@ -76,6 +76,7 @@ public class Adventure {
     private boolean runEvent(Event event) throws Exception{
         if(event.getEventType() == EventType.ENEMY){
             event.getEnemyEvent().printPrompt();
+            event.getEnemyEvent().getEnemy().printEnemy();
             if(crew.getCrewPower() >= event.getEnemyEvent().getEnemy().getPower()){
                 System.out.println("Enemy defeated!");
                 return true;
@@ -164,7 +165,7 @@ public class Adventure {
             }
         }
 
-        System.out.println("Adventure complete! You found the treasure");
+        System.out.println("\nAdventure complete! You found the treasure");
         System.out.println("Successful events: " + successfulE);
         System.out.println("Failed events: " + failedE);
     }
