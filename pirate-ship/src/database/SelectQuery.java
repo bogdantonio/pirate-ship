@@ -1,13 +1,112 @@
 package database;
 
+import enemy.Enemy;
+import enemy.Faction;
+import events.*;
 import pirate.PirateStatSet;
 import pirate.Role;
 import pirateSubclasses.*;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class SelectQuery {
     DataBaseCredentials DBC = new DataBaseCredentials();
+
+    public EventSet selectEventSet() throws Exception {
+        ArrayList<Event> events = new ArrayList<>();
+        ArrayList<Integer> eventIds = new ArrayList<>();
+        int eventSetId = 0;
+
+        String setsQuery = "SELECT * FROM public.event_sets order by random() limit 1";
+
+        Connection connection = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
+        PreparedStatement setsStatement = connection.prepareStatement(setsQuery);
+        ResultSet rsSets = setsStatement.executeQuery();
+
+        // extract the id of each event that makes up the event set
+        if(rsSets.next()){
+            for(int i = 1; i <= 10; i++){
+                eventIds.add(rsSets.getInt("event" + i + "_id"));
+            }
+        }
+
+        if(eventIds.isEmpty()){
+            return null;
+        }
+
+        // take the data of the events in the event set
+        String eventsQuery = "SELECT e.event_id, e.event_type, " +
+                "ee.enemy_event_id, ee.prompt AS enemy_prompt, " +
+                "se.subclass_event_id, se.prompt AS subclass_prompt, " +
+                "en.enemy_id, en.name AS enemy_name, en.alias AS enemy_alias, en.power, en.faction, en.sex, " +
+                "se.subclass, se.required_stat1, se.required_stat2, se.required_stat3 " +
+                "FROM public.events e " +
+                "LEFT JOIN public.enemies_events ee ON e.enemy_event_id = ee.enemy_event_id " +
+                "LEFT JOIN public.enemies en ON ee.enemy_id = en.enemy_id " +
+                "LEFT JOIN public.subclass_events se ON e.subclass_event_id = se.subclass_event_id " +
+                "WHERE e.event_id IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement eventsStatement = connection.prepareStatement(eventsQuery);
+        for (int i = 0; i < eventIds.size(); i++) {
+            eventsStatement.setInt(i + 1, eventIds.get(i));
+        }
+        ResultSet rsEvents = eventsStatement.executeQuery();
+
+        while(rsEvents.next()){
+            int eventId = rsEvents.getInt("event_id");
+            // take the type of the event to later create the new event object appropriately
+            String typeStr = rsEvents.getString("event_type");
+
+            // event wrapper to take the new event of either type and add it to the events
+            Event eventWrapper = null;
+
+            if ("ENEMY".equalsIgnoreCase(typeStr)) {
+                // here fix the faction text since it may be multiple words in some cases
+                String rawFaction = rsEvents.getString("faction");
+                String fixedFaction = rawFaction.trim().replace(" ", "_").toUpperCase();
+                // build the enemy object
+                Enemy enemy = new Enemy(
+                        rsEvents.getInt("enemy_id"),
+                        rsEvents.getString("enemy_name"),
+                        rsEvents.getString("enemy_alias"),
+                        rsEvents.getInt("power"),
+                        Faction.valueOf(fixedFaction),
+                        rsEvents.getString("sex")
+                );
+
+                // make the enemy event
+                EnemyEvent enemyEvent = new EnemyEvent(
+                        rsEvents.getInt("enemy_event_id"),
+                        rsEvents.getString("enemy_prompt"),
+                        enemy
+                );
+
+                // give the enemy event to the wrapper
+                eventWrapper = new Event(eventId, EventType.ENEMY, enemyEvent, null);
+
+            } else if ("SUBCLASS".equalsIgnoreCase(typeStr)) {
+                // build the pirateSubclassEvent
+                PirateSubclassEvent subclassEvent = new PirateSubclassEvent(
+                        rsEvents.getInt("subclass_event_id"),
+                        Role.valueOf(rsEvents.getString("subclass")),
+                        rsEvents.getString("subclass_prompt"),
+                        rsEvents.getInt("required_stat1"),
+                        rsEvents.getInt("required_stat2"),
+                        rsEvents.getInt("required_stat3")
+                );
+
+                // wrap it in the main event class
+                eventWrapper = new Event(eventId, EventType.SUBCLASS, null, subclassEvent);
+            }
+
+            if (eventWrapper != null) {
+                events.add(eventWrapper);
+            }
+        }
+
+        return new EventSet(eventSetId, events);
+    }
 
     public Second selectSecond() throws SQLException {
         Second second = null;
