@@ -1,5 +1,6 @@
 package crew;
 
+import database.InsertQuery;
 import pirate.InvalidDataException;
 import pirate.Pirate;
 import pirate.PirateStatSet;
@@ -93,6 +94,7 @@ public class Crew {
         if(crewMembers.containsKey(role)){
             throw new ExistingRoleException("A pirate with the role " + " already exists in the crew!");
         }
+
         crewMembers.put(role, pirate);
         this.crewPower = setCrewPower();
     }
