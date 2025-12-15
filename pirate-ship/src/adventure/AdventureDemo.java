@@ -1,10 +1,12 @@
+package adventure;
+
 import crew.Crew;
-import enemy.Enemy;
-import enemy.Faction;
+import events.enemy.Enemy;
+import events.enemy.Faction;
 import events.*;
-import pirate.Pirate;
-import pirate.PirateStatSet;
-import pirate.Role;
+import pirateSubclasses.pirate.Pirate;
+import pirateSubclasses.pirate.PirateStatSet;
+import pirateSubclasses.pirate.Role;
 import pirateSubclasses.*;
 
 import java.util.*;
@@ -20,8 +22,8 @@ public class AdventureDemo {
 
         // make new events
         EnemyEvent enemyEvent1 = new EnemyEvent(1, "A marine warship appears at the Horizon!", enemy1);
-        EnemyEvent enemyEvent2 = new EnemyEvent(2, "The sea darkens as a pirate flag appears at the horizon!", enemy2);
-        EnemyEvent enemyEvent3 = new EnemyEvent(3, "A pirate ship is trailing your crew. Beware!", enemy3);
+        EnemyEvent enemyEvent2 = new EnemyEvent(2, "The sea darkens as a pirateSubclasses.pirate flag appears at the horizon!", enemy2);
+        EnemyEvent enemyEvent3 = new EnemyEvent(3, "A pirateSubclasses.pirate ship is trailing your crew. Beware!", enemy3);
         EnemyEvent enemyEvent4 = new EnemyEvent(4, "The ocean begins to boil! The Fleet Admiral has arrived to dispense Absolute Justice!", enemy4);
         EnemyEvent enemyEvent5 = new EnemyEvent(5, "A massive singing ship emerges from the fog demanding a toll of sweets or your life!", enemy5);
 
@@ -32,7 +34,7 @@ public class AdventureDemo {
         PirateSubclassEvent pirateSubclassEvent3 = new PirateSubclassEvent(3, Role.DOCTOR,
                 "A mysterious jungle fever is spreading through the ship! You must synthesize a cure before the captain collapses!", 75, 70, 80);
         PirateSubclassEvent pirateSubclassEvent4 = new PirateSubclassEvent(4, Role.SNIPER,
-                "The enemy captain is mocking us from his balcony. Shoot the feather off his hat to ruin his authority!", 85, 88, 90);
+                "The events.enemy captain is mocking us from his balcony. Shoot the feather off his hat to ruin his authority!", 85, 88, 90);
         PirateSubclassEvent pirateSubclassEvent5 = new PirateSubclassEvent(5, Role.NAVIGATOR,
                 "The Log Pose is spinning wildly! A Knock Up Stream is forming beneath the hull—guide the ship to ride the current!", 80, 85, 75);
 
@@ -182,7 +184,7 @@ public class AdventureDemo {
         Collections.shuffle(helmsmen);
 
         // from here on, to build the crew:
-        // select a pirate for a role. 3 random pirates will be displayed and the player must choose 1
+        // select a pirateSubclasses.pirate for a role. 3 random pirates will be displayed and the player must choose 1
         // after the crew is built, run the adventure
         Scanner input = new Scanner(System.in);
         EnumMap<Role, Pirate> crewMembers = new EnumMap<>(Role.class);
@@ -190,12 +192,12 @@ public class AdventureDemo {
         String captain = input.nextLine();
         System.out.println("And what is your alias?");
         String alias = input.nextLine();
-        System.out.println("How should we name our pirate crew?");
+        System.out.println("How should we name our pirateSubclasses.pirate crew?");
         String crewName = input.nextLine();
         Crew myCrew = new Crew(1, crewName, captain, crewMembers, alias);
         myCrew.validateCrewData();
 
-        System.out.println("Time to choose the pirate crew!");
+        System.out.println("Time to choose the pirateSubclasses.pirate crew!");
         // choose crew members
         System.out.println("Who will have the honor to be your second?");
         List<Second> secondList = seconds.subList(0, 3); // take the 3 random seconds

@@ -1,10 +1,10 @@
 package database;
 
-import enemy.Enemy;
-import enemy.Faction;
+import events.enemy.Enemy;
+import events.enemy.Faction;
 import events.*;
-import pirate.PirateStatSet;
-import pirate.Role;
+import pirateSubclasses.pirate.PirateStatSet;
+import pirateSubclasses.pirate.Role;
 import pirateSubclasses.*;
 
 import java.sql.*;
@@ -26,6 +26,8 @@ public class SelectQuery {
 
         // extract the id of each event that makes up the event set
         if(rsSets.next()){
+            eventSetId = rsSets.getInt("event_set_id");
+
             for(int i = 1; i <= 10; i++){
                 eventIds.add(rsSets.getInt("event" + i + "_id"));
             }
@@ -65,7 +67,7 @@ public class SelectQuery {
                 // here fix the faction text since it may be multiple words in some cases
                 String rawFaction = rsEvents.getString("faction");
                 String fixedFaction = rawFaction.trim().replace(" ", "_").toUpperCase();
-                // build the enemy object
+                // build the events.enemy object
                 Enemy enemy = new Enemy(
                         rsEvents.getInt("enemy_id"),
                         rsEvents.getString("enemy_name"),
@@ -75,14 +77,14 @@ public class SelectQuery {
                         rsEvents.getString("sex")
                 );
 
-                // make the enemy event
+                // make the events.enemy event
                 EnemyEvent enemyEvent = new EnemyEvent(
                         rsEvents.getInt("enemy_event_id"),
                         rsEvents.getString("enemy_prompt"),
                         enemy
                 );
 
-                // give the enemy event to the wrapper
+                // give the events.enemy event to the wrapper
                 eventWrapper = new Event(eventId, EventType.ENEMY, enemyEvent, null);
 
             } else if ("SUBCLASS".equalsIgnoreCase(typeStr)) {
@@ -106,6 +108,34 @@ public class SelectQuery {
         }
 
         return new EventSet(eventSetId, events);
+    }
+
+    public int selectLastCrewId() throws SQLException{
+        String query = "SELECT crew_id FROM public.crews order by crew_id desc limit 1";
+
+        Connection connection = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        if(rs.next()){
+            return rs.getInt("crew_id");
+        }
+
+        return -1;
+    }
+
+    public int selectLastAdventureId() throws SQLException{
+        String query = "SELECT adventure_id FROM public.adventures order by adventure_id desc limit 1";
+
+        Connection connection = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        if(rs.next()){
+            return rs.getInt("adventure_id");
+        }
+
+        return -1;
     }
 
     public Second selectSecond() throws SQLException {

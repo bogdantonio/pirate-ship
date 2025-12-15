@@ -1,4 +1,4 @@
-package enemy;
+package events.enemy;
 
 public enum Faction {
     UNAFFILIATED,

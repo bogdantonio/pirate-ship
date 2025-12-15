@@ -1,6 +1,6 @@
 package events;
 
-import pirate.InvalidDataException;
+import pirateSubclasses.pirate.InvalidDataException;
 
 public class Event {
     private int eventId;

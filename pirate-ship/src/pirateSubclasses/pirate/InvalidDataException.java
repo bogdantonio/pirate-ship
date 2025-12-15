@@ -1,4 +1,4 @@
-package pirate;
+package pirateSubclasses.pirate;
 
 public class InvalidDataException extends Exception {
     public InvalidDataException(String message) {

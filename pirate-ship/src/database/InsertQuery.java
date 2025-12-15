@@ -1,5 +1,6 @@
 package database;
 
+import adventure.Adventure;
 import crew.Crew;
 import pirateSubclasses.*;
 
@@ -33,6 +34,24 @@ public class InsertQuery {
         preparedStatement.setInt(11, (crew.getShipwright().getShipwrightId()));
         preparedStatement.setInt(12, (crew.getMusician().getMusicianId()));
         preparedStatement.setInt(13, (crew.getHelmsman().getHelmsmanId()));
+
+        preparedStatement.executeUpdate();
+        connection.close();
+    }
+
+    public void insertAdventureData(Adventure adventure) throws SQLException {
+        DataBaseCredentials DBC = new DataBaseCredentials();
+
+        String query = "INSERT into public.adventures (crew_id, event_set, successful_events, failed_events) " +
+                "VALUES (?, ?, ?, ?) ";
+
+        Connection connection = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        preparedStatement.setInt(1, adventure.getCrew().getCrewId());
+        preparedStatement.setInt(2, adventure.getEventSet().getEventSetId());
+        preparedStatement.setInt(3, adventure.getSuccessfulEvents());
+        preparedStatement.setInt(4, adventure.getFailedEvents());
 
         preparedStatement.executeUpdate();
         connection.close();

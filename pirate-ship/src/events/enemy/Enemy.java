@@ -1,6 +1,6 @@
-package enemy;
+package events.enemy;
 
-import pirate.InvalidDataException;
+import pirateSubclasses.pirate.InvalidDataException;
 
 public class Enemy {
     private int enemyId;

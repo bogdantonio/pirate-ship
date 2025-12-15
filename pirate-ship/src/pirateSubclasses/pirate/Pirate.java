@@ -1,4 +1,4 @@
-package pirate;
+package pirateSubclasses.pirate;
 
 public abstract class Pirate {
     private int pirateId;

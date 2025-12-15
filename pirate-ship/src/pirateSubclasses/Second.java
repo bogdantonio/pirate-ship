@@ -1,8 +1,8 @@
 package pirateSubclasses;
-import pirate.Pirate;
-import pirate.PirateStatSet;
-import pirate.Role;
-import pirate.InvalidDataException;
+import pirateSubclasses.pirate.Pirate;
+import pirateSubclasses.pirate.PirateStatSet;
+import pirateSubclasses.pirate.Role;
+import pirateSubclasses.pirate.InvalidDataException;
 
 public class Second extends Pirate{
     private int secondId;

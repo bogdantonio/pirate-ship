@@ -1,7 +1,7 @@
 package events;
 
-import pirate.InvalidDataException;
-import pirate.Role;
+import pirateSubclasses.pirate.InvalidDataException;
+import pirateSubclasses.pirate.Role;
 
 public class PirateSubclassEvent implements EventInterface {
     private int subclassEventId;

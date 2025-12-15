@@ -1,7 +1,7 @@
 package events;
 
-import enemy.Enemy;
-import pirate.InvalidDataException;
+import events.enemy.Enemy;
+import pirateSubclasses.pirate.InvalidDataException;
 
 public class EnemyEvent implements EventInterface {
     private int enemyEventId;

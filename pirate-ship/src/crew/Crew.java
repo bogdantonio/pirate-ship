@@ -1,13 +1,11 @@
 package crew;
 
-import database.InsertQuery;
-import pirate.InvalidDataException;
-import pirate.Pirate;
-import pirate.PirateStatSet;
-import pirate.Role;
+import pirateSubclasses.pirate.InvalidDataException;
+import pirateSubclasses.pirate.Pirate;
+import pirateSubclasses.pirate.PirateStatSet;
+import pirateSubclasses.pirate.Role;
 import pirateSubclasses.*;
 
-import java.security.PublicKey;
 import java.util.EnumMap;
 
 public class Crew {
@@ -16,7 +14,7 @@ public class Crew {
     private String captain;
     private String captainAlias;
     private double crewPower; // updated each time a new crew member is introduced
-    // map the pirate to the enum type since I want one of each pirate subclass
+    // map the pirateSubclasses.pirate to the enum type since I want one of each pirateSubclasses.pirate subclass
     private EnumMap<Role, Pirate> crewMembers;
 
     public Crew(int crewId, String crewName, String captain, EnumMap<Role, Pirate> crewMembers, String captainAlias) {
@@ -66,7 +64,7 @@ public class Crew {
     public double setCrewPower(){
         double cumulativePower = 0;
         for (Pirate p : crewMembers.values()) {
-            // the average of the stats for a pirate
+            // the average of the stats for a pirateSubclasses.pirate
             PirateStatSet pss = p.getPirateStatSet();
             double avg = (pss.getStrength() + pss.getAgility() + pss.getEndurance() +
                     pss.getIntelligence() + pss.getCharisma() + pss.getWillpower()) / 6.0;
@@ -86,13 +84,13 @@ public class Crew {
 
     public void addCrewMember(Pirate pirate) throws Exception{
         if(this.fullCrew()){
-            throw new FullCrewException("Pirates can't be added no more. The pirate crew is full!");
+            throw new FullCrewException("Pirates can't be added no more. The pirateSubclasses.pirate crew is full!");
         }
 
         Role role = pirate.getRole();
-        // check if the pirate with the specified role already exists
+        // check if the pirateSubclasses.pirate with the specified role already exists
         if(crewMembers.containsKey(role)){
-            throw new ExistingRoleException("A pirate with the role " + " already exists in the crew!");
+            throw new ExistingRoleException("A pirateSubclasses.pirate with the role " + " already exists in the crew!");
         }
 
         crewMembers.put(role, pirate);

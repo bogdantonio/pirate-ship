@@ -1,8 +1,8 @@
 package events;
 
-import enemy.Enemy;
-import enemy.Faction;
-import pirate.Role;
+import events.enemy.Enemy;
+import events.enemy.Faction;
+import pirateSubclasses.pirate.Role;
 
 import java.util.ArrayList;
 
@@ -13,8 +13,8 @@ public class EventDemo{
         Enemy enemy3 = new Enemy(3, "Boa Hancock", "Pirate Empress", 75, Faction.PIRATES, "F");
 
         EnemyEvent enemyEvent1 = new EnemyEvent(1, "A marine warship appears at the Horizon!", enemy1);
-        EnemyEvent enemyEvent2 = new EnemyEvent(2, "The sea darkens as a pirate flag appears at the horizon!", enemy2);
-        EnemyEvent enemyEvent3 = new EnemyEvent(3, "A pirate ship is trailing your crew. Beware!", enemy3);
+        EnemyEvent enemyEvent2 = new EnemyEvent(2, "The sea darkens as a pirateSubclasses.pirate flag appears at the horizon!", enemy2);
+        EnemyEvent enemyEvent3 = new EnemyEvent(3, "A pirateSubclasses.pirate ship is trailing your crew. Beware!", enemy3);
 
         PirateSubclassEvent pirateSubclassEvent1 = new PirateSubclassEvent(1, Role.COOK,
                 "The crew is hungry! You don't have that many ingredients at hand so you must do what you can!", 60, 65, 72 );

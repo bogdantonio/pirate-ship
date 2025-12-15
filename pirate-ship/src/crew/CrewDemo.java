@@ -2,9 +2,9 @@ package crew;
 
 import java.util.EnumMap;
 
-import pirate.Pirate;
-import pirate.PirateStatSet;
-import pirate.Role;
+import pirateSubclasses.pirate.Pirate;
+import pirateSubclasses.pirate.PirateStatSet;
+import pirateSubclasses.pirate.Role;
 import pirateSubclasses.*;
 
 public class CrewDemo {
@@ -43,7 +43,7 @@ public class CrewDemo {
 
         myCrew.printCrew();
         if (myCrew.fullCrew()) {
-            System.out.println("The pirate crew is full!\n");
+            System.out.println("The pirateSubclasses.pirate crew is full!\n");
         } else {
             System.out.println("Members can still be added to the crew!\n");
         }
@@ -58,7 +58,7 @@ public class CrewDemo {
 
         myCrew.printCrew();
         if (myCrew.fullCrew()) {
-            System.out.println("The pirate crew is full!\n");
+            System.out.println("The pirateSubclasses.pirate crew is full!\n");
         } else {
             System.out.println("Members can still be added to the crew!\n");
         }

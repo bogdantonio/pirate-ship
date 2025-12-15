@@ -1,6 +1,6 @@
 package events;
 
-import pirate.InvalidDataException;
+import pirateSubclasses.pirate.InvalidDataException;
 
 import java.util.ArrayList;
 

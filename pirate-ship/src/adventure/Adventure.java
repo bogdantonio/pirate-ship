@@ -1,3 +1,5 @@
+package adventure;
+
 import crew.Crew;
 import events.Event;
 import events.EventSet;
@@ -127,8 +129,8 @@ public class Adventure {
         Scanner input = new Scanner(System.in);
 
         ArrayList<Event> eventsSet = eventSet.getEventSet();
-        int successfulE = 0;
-        int failedE = 0;
+        setFailedEvents(0);
+        setSuccessfulEvents(0);
 
         for(Event event : eventsSet){
             String cmd = "";
@@ -144,30 +146,30 @@ public class Adventure {
             }
 
             if(cmd.equals("q")){
-                System.out.println("\nAdventure aborted!");
-                System.out.println("Successful events: " + successfulE);
-                System.out.println("Failed events: " + failedE);
+                System.out.println("\nadventure.Adventure aborted!");
+                System.out.println("Successful events: " + this.successfulEvents);
+                System.out.println("Failed events: " + this.failedEvents);
                 return;
             }
 
             if(runEvent(event)){
-                successfulE++;
+                this.successfulEvents++;
             }
             else{
-                failedE++;
-                if(failedE >= 3){
+                this.failedEvents++;
+                if(this.failedEvents > 3){
                     System.out.println("\nLost at sea! Too many events failed!");
-                    System.out.println("Successful events: " + successfulE);
-                    System.out.println("Failed events: " + failedE);
+                    System.out.println("Successful events: " + this.successfulEvents);
+                    System.out.println("Failed events: " + this.failedEvents);
                     return;
                 }
 
             }
         }
 
-        System.out.println("\nAdventure complete! You found the treasure");
-        System.out.println("Successful events: " + successfulE);
-        System.out.println("Failed events: " + failedE);
+        System.out.println("\nAdventure completed! You found the treasure");
+        System.out.println("Successful events: " + this.successfulEvents);
+        System.out.println("Failed events: " + this.failedEvents);
     }
 
 }

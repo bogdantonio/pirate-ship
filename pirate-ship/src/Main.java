@@ -1,9 +1,10 @@
+import adventure.Adventure;
 import crew.Crew;
 import database.InsertQuery;
 import database.SelectQuery;
 import events.EventSet;
-import pirate.Pirate;
-import pirate.Role;
+import pirateSubclasses.pirate.Pirate;
+import pirateSubclasses.pirate.Role;
 import pirateSubclasses.*;
 
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ public class Main{
         // EVENTS part
         EventSet eventSet = selectQuery.selectEventSet();
         eventSet.validateEventSetData();
-        eventSet.printEvents();
 
         // CREW part
         ArrayList<Second> seconds = new ArrayList<>();
@@ -75,10 +75,11 @@ public class Main{
         System.out.println("How should we name our pirate crew?");
         String crewName = input.nextLine();
 
-        Crew crew = new Crew(1, crewName, captain, crewMembers, alias);
+        int crewId = selectQuery.selectLastCrewId() + 1;
+        Crew crew = new Crew(crewId, crewName, captain, crewMembers, alias);
         crew.validateCrewData();
 
-        System.out.println("Time to choose the pirate crew!");
+        System.out.println("Time to choose the pirateSubclasses.pirate crew!");
 
         System.out.println("Who will have the honor to be your second?");
         int secondIterator = 1;
@@ -176,6 +177,12 @@ public class Main{
         insertQuery.insertCrewData(crew);
 
         crew.printCrew();
-        System.out.println(crew.getCrewPower());
+        System.out.println("\nCrew power: " + crew.getCrewPower());
+
+        int adventureId = selectQuery.selectLastAdventureId() + 1;
+        Adventure adventure = new Adventure(adventureId, eventSet, crew);
+        adventure.runAdventure();
+
+        insertQuery.insertAdventureData(adventure);
     }
 }
