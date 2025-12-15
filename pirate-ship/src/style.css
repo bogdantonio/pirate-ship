@@ -1,0 +1,256 @@
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+
+body{
+    background-image: url("img/background4.jpg");
+    background-size: auto;
+    background-position: center;
+
+    min-height: 100vh;
+    margin: 0;
+}
+
+.main-container {
+    /* 1. Turn on Flexbox */
+    display: flex;
+    flex-direction: column;
+
+    /* 2. Make the container fill the whole screen height */
+    min-height: 100vh;
+    width: 100%;
+
+    /* 3. Center items Horizontally (left-to-right) */
+    align-items: center;
+
+    /* 4. Center items Vertically (top-to-bottom) */
+    /* 'center' packs them in the middle. 'space-evenly' spreads them out. */
+    justify-content: center;
+
+    /* 5. Add a specific gap between the Text div and the Button div */
+    gap: 50px;
+}
+
+/* ====================================================*/
+/* ==================/ WELCOME PAGE /==================*/
+/* ====================================================*/
+
+/* The Big Cool Title */
+.game-title {
+    font-family: 'Pirata One', cursive; /* Use the pirate font */
+    font-size: 8rem;  /* Very big text */
+    color: #e6b800;   /* Gold color */
+    margin: 0;        /* Remove default spacing */
+
+    /* IMPORTANT: This adds a black outline/shadow so it's readable */
+    text-shadow: 4px 4px 0px #000000;
+
+    /* Optional: Slight animation on hover */
+    transition: transform 0.3s;
+    cursor: default;
+}
+
+.game-title:hover {
+    transform: scale(1.05); /* Grows slightly when you mouse over it */
+}
+
+/* The Subtitle */
+.subtitle {
+    font-size: 1.5rem;
+    color: #ffffff; /* White text */
+    margin-top: 10px;
+    letter-spacing: 2px; /* Spaced out letters look cinematic */
+    text-shadow: 2px 2px 4px #000000; /* Black shadow for readability */
+    text-transform: uppercase;
+}
+
+.start-btn {
+    margin-top: 40px;          /* Space between subtitle and button */
+    padding: 15px 40px;        /* Make the button nice and big */
+    font-family: 'Pirata One', cursive; /* Matches the title font */
+    font-size: 2rem;           /* Large text */
+    color: #ffd700;            /* Gold text */
+
+    /* Button Background (Dark Red/Brown) */
+    background-color: #5a1a1a;
+    border: 3px solid #b8860b; /* Gold border */
+    border-radius: 8px;        /* Slightly rounded corners */
+
+    cursor: pointer;           /* Changes mouse cursor to a hand */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5); /* Drop shadow for 3D effect */
+    transition: all 0.3s ease; /* Smooth animation for hover */
+}
+
+/* Hover Effect: What happens when you mouse over it */
+.start-btn:hover {
+    background-color: #800000; /* Lighter red */
+    transform: scale(1.1);     /* Grow 10% bigger */
+    box-shadow: 0 0 15px #ffd700; /* Glowing gold shadow */
+}
+
+/* Active Effect: What happens when you click it */
+.start-btn:active {
+    transform: scale(0.95);    /* Shrink slightly to feel like a real button press */
+}
+
+/* =================================================*/
+/* ==================/ CREW PAGE /==================*/
+/* =================================================*/
+
+/* --- Manifest Card Styling --- */
+.manifest-card {
+    background-color: rgba(0, 0, 0, 0.85); /* Dark semi-transparent background */
+    padding: 40px;
+    border: 2px solid #b8860b; /* Gold border */
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px; /* Keeps it from getting too wide */
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.manifest-title {
+    font-family: 'Pirata One', cursive;
+    color: #ffd700;
+    font-size: 3rem;
+    margin-bottom: 30px;
+    margin-top: 0;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* --- Input Groups --- */
+.input-group {
+    margin-bottom: 25px;
+    text-align: left; /* Aligns questions to the left */
+}
+
+.input-group label {
+    display: block;
+    font-family: 'Pirata One', cursive;
+    color: #e0e0e0;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2rem;
+    font-family: 'Arial', sans-serif; /* Readable font for input */
+    color: #ffd700;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid #5a1a1a; /* Dark red underline */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-bottom: 2px solid #ffd700; /* Turns gold when typing */
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-style: italic;
+}
+
+/* --- Error Text --- */
+.error-text {
+    color: #ff4444;
+    font-family: sans-serif;
+    min-height: 20px; /* Keeps space so layout doesn't jump */
+    font-weight: bold;
+}
+
+/* --- Button Adjustment --- */
+.small-btn {
+    margin-top: 10px;
+    font-size: 1.5rem; /* Slightly smaller than the main title button */
+    width: 100%;
+}
+
+/* ========================================================= */
+/* ==================/ CREW MEMBERS PAGE /================== */
+/* ========================================================= */
+
+/* Container for the 3 cards */
+.candidates-row {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* Space between cards */
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap; /* Wraps to next line on small screens */
+}
+
+/* Individual Pirate Card */
+.pirate-card {
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 2px solid #5a1a1a; /* Dark Red Border */
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+}
+
+.pirate-card:hover {
+    transform: translateY(-10px); /* Floats up slightly */
+    border-color: #ffd700; /* Border turns gold */
+}
+
+/* Pirate Image */
+.pirate-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover; /* Ensures image fills box without stretching */
+    border: 1px solid #b8860b;
+    margin-bottom: 15px;
+}
+
+/* Text Styling */
+.pirate-name {
+    font-family: 'Pirata One', cursive;
+    color: #ffd700;
+    font-size: 2rem;
+    margin: 5px 0;
+}
+
+.pirate-alias {
+    color: #aaa;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.stat-list {
+    list-style: none; /* Remove bullet points */
+    padding: 0;
+    color: #e0e0e0;
+    font-family: 'Arial', sans-serif;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.stat-list li {
+    border-bottom: 1px solid #333;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* The Recruit Button */
+.recruit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #b8860b;
+    color: black;
+    font-family: 'Pirata One', cursive;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.recruit-btn:hover {
+    background-color: #ffd700;
+}

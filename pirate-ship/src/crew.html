@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crew</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="main-container">
+
+    <div class="manifest-card">
+        <h1 class="manifest-title">Ship's Manifest</h1>
+
+        <form id="pirateForm">
+            <div class="input-group">
+                <label for="captainName">What be yer true name, Captain?</label>
+                <input type="text" id="captainName" placeholder="e.g. Jack Sparrow" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="alias">Whom shall the enemies fear? </label>
+                <input type="text" id="alias" placeholder="e.g. The Sparrow" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="crewName">Under what flag do we sail? </label>
+                <input type="text" id="crewName" placeholder="e.g. The Black Pearl Crew" autocomplete="off">
+            </div>
+
+            <p id="errorMsg" class="error-text"></p>
+
+            <button type="submit" class="start-btn small-btn">Sign & Set Sail</button>
+
+        </form>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
