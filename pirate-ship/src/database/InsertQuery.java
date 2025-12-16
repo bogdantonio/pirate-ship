@@ -3,11 +3,10 @@ package database;
 import adventure.Adventure;
 import crew.Crew;
 import pirateSubclasses.*;
+import pirateSubclasses.pirate.Pirate;
+import pirateSubclasses.pirate.PirateStatSet;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class InsertQuery {
     DataBaseCredentials DBC = new DataBaseCredentials();
@@ -55,6 +54,243 @@ public class InsertQuery {
 
         preparedStatement.executeUpdate();
         connection.close();
+    }
+
+
+    /* ----------------------------------- USED FOR INTERFACE IMPLEMENTATION ---------------------------- */
+
+    // The Main Entry Point for saving the Crew
+    public void insertFullCrewTransaction(Crew crew) throws SQLException {
+        Connection conn = null;
+        PreparedStatement psCrew = null;
+
+        try {
+            conn = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
+            conn.setAutoCommit(false); // 1. Start Transaction
+
+            // 2. Insert Every Member (StatSet -> Pirate -> Role Table)
+            // This updates the Java Objects with their new database IDs
+            insertSecond(conn, crew.getSecond());
+            insertNavigator(conn, crew.getNavigator());
+            insertSniper(conn, crew.getSniper());
+            insertCook(conn, crew.getCook());
+            insertDoctor(conn, crew.getDoctor());
+            insertArcheologist(conn, crew.getArcheologist());
+            insertShipwright(conn, crew.getShipwright());
+            insertMusician(conn, crew.getMusician());
+            insertHelmsman(conn, crew.getHelmsman());
+
+            // 3. Insert the Crew (Now that we have all the IDs)
+            String query = "INSERT into public.crews (captain, crew_power, crew_name, captain_alias, " +
+                    "second, navigator, sniper, cook, doctor, archeologist, shipwright, musician, helmsman) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            psCrew = conn.prepareStatement(query);
+            psCrew.setString(1, crew.getCaptain());
+            psCrew.setInt(2, (int) crew.getCrewPower());
+            psCrew.setString(3, crew.getCrewName());
+            psCrew.setString(4, crew.getCaptainAlias());
+
+            // Link the newly created role IDs
+            psCrew.setInt(5, crew.getSecond().getSecondId());
+            psCrew.setInt(6, crew.getNavigator().getNavigatorId());
+            psCrew.setInt(7, crew.getSniper().getSniperId());
+            psCrew.setInt(8, crew.getCook().getCookId());
+            psCrew.setInt(9, crew.getDoctor().getDoctorId());
+            psCrew.setInt(10, crew.getArcheologist().getArcheologistId());
+            psCrew.setInt(11, crew.getShipwright().getShipwrightId());
+            psCrew.setInt(12, crew.getMusician().getMusicianId());
+            psCrew.setInt(13, crew.getHelmsman().getHelmsmanId());
+
+            psCrew.executeUpdate();
+
+            conn.commit(); // 4. Commit Transaction
+            System.out.println("Crew successfully registered.");
+
+        } catch (SQLException e) {
+            if (conn != null) conn.rollback(); // Rollback on error
+            throw e;
+        } finally {
+            if (psCrew != null) psCrew.close();
+            if (conn != null) conn.close();
+        }
+    }
+
+    // --- GENERIC HELPERS ---
+    private int insertStatSet(Connection conn, PirateStatSet stats) throws SQLException {
+        String sql = "INSERT INTO public.stat_sets (strength, agility, endurance, intelligence, charisma, willpower) " +
+                "VALUES (?, ?, ?, ?, ?, ?) RETURNING stat_set_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, stats.getStrength());
+            ps.setInt(2, stats.getAgility());
+            ps.setInt(3, stats.getEndurance());
+            ps.setInt(4, stats.getIntelligence());
+            ps.setInt(5, stats.getCharisma());
+            ps.setInt(6, stats.getWillpower());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        throw new SQLException("Failed to insert stat set.");
+    }
+
+    private int insertBasePirate(Connection conn, Pirate p, int statSetId) throws SQLException {
+        String sql = "INSERT INTO public.pirates (name, alias, role, sex, stat_set) VALUES (?, ?, ?::pirate_type, ?::sex_type, ?) RETURNING pirate_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getAlias());
+            ps.setString(3, p.getRole().toString());
+            ps.setString(4, p.getSex());
+            ps.setInt(5, statSetId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        throw new SQLException("Failed to insert pirate base.");
+    }
+
+    private void insertSecond(Connection conn, Second p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.seconds (pirate_id, leadership, tactics, morale_boost) VALUES (?, ?, ?, ?) RETURNING second_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getLeadership());
+            ps.setInt(3, p.getTactics());
+            ps.setInt(4, p.getMoraleBoost());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setSecondId(rs.getInt(1)); // Update Object ID
+            }
+        }
+    }
+
+    private void insertNavigator(Connection conn, Navigator p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.navigators (pirate_id, navigation, weather_prediction, map_reading) VALUES (?, ?, ?, ?) RETURNING navigator_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getNavigation());
+            ps.setInt(3, p.getWeatherPrediction());
+            ps.setInt(4, p.getMapReading());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setNavigatorId(rs.getInt(1));
+            }
+        }
+    }
+
+    private void insertSniper(Connection conn, Sniper p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.snipers (pirate_id, accuracy, weapon_range, critical_chance) VALUES (?, ?, ?, ?) RETURNING sniper_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getAccuracy());
+            ps.setInt(3, p.getWeaponRange());
+            ps.setInt(4, p.getCriticalChance());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setSniperId(rs.getInt(1));
+            }
+        }
+    }
+
+    private void insertCook(Connection conn, Cook p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.cooks (pirate_id, cooking, meal_quality, morale_impact) VALUES (?, ?, ?, ?) RETURNING cook_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getCooking());
+            ps.setInt(3, p.getMealQuality());
+            ps.setInt(4, p.getMoraleImpact());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setCookId(rs.getInt(1));
+            }
+        }
+    }
+
+    private void insertDoctor(Connection conn, Doctor p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.doctors (pirate_id, medical_ability, healing_speed, diagnosis) VALUES (?, ?, ?, ?) RETURNING doctor_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getMedicalAbility());
+            ps.setInt(3, p.getHealingSpeed());
+            ps.setInt(4, p.getDiagnosis());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setDoctorId(rs.getInt(1));
+            }
+        }
+    }
+
+    private void insertArcheologist(Connection conn, Archeologist p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.archeologists (pirate_id, artifact_knowledge, digging, trap_detection) VALUES (?, ?, ?, ?) RETURNING archeologist_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getArtifactKnowledge());
+            ps.setInt(3, p.getDigging());
+            ps.setInt(4, p.getTrapDetection());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setArcheologistId(rs.getInt(1));
+            }
+        }
+    }
+
+    private void insertShipwright(Connection conn, Shipwright p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.shipwrights (pirate_id, repair, construction, materials) VALUES (?, ?, ?, ?) RETURNING shipwright_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getRepair());
+            ps.setInt(3, p.getConstruction());
+            ps.setInt(4, p.getMaterials());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setShipwrightId(rs.getInt(1));
+            }
+        }
+    }
+
+    private void insertMusician(Connection conn, Musician p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.musicians (pirate_id, music, inspiration, buff_strength) VALUES (?, ?, ?, ?) RETURNING musician_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getMusic());
+            ps.setInt(3, p.getInspiration());
+            ps.setInt(4, p.getBuffStrength());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setMusicianId(rs.getInt(1));
+            }
+        }
+    }
+
+    private void insertHelmsman(Connection conn, Helmsman p) throws SQLException {
+        int statId = insertStatSet(conn, p.getPirateStatSet());
+        int pirateId = insertBasePirate(conn, p, statId);
+
+        String sql = "INSERT INTO public.helmsmen (pirate_id, maneuvering, precision, storm_riding) VALUES (?, ?, ?, ?) RETURNING helmsman_id";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pirateId);
+            ps.setInt(2, p.getManeuvering());
+            ps.setInt(3, p.getPrecision());
+            ps.setInt(4, p.getStormRiding());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) p.setHelmsmanId(rs.getInt(1));
+            }
+        }
     }
 
 }

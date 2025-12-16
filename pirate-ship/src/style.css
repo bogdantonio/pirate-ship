@@ -1,108 +1,108 @@
 @import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
 
-body{
+body {
     background-image: url("img/background4.jpg");
-    background-size: auto;
+
+    /* 1. Scale the image to cover the screen */
+    background-size: cover;
+
+    /* 2. Center it */
     background-position: center;
 
+    /* 3. Do not repeat the image if content is huge */
+    background-repeat: no-repeat;
+
+    /* 4. THE FIX: Pin the image to the window.
+       It won't move when you scroll. */
+    background-attachment: fixed;
+
+    /* 5. Ensure body covers at least the full screen */
     min-height: 100vh;
     margin: 0;
 }
 
 .main-container {
-    /* 1. Turn on Flexbox */
     display: flex;
     flex-direction: column;
 
-    /* 2. Make the container fill the whole screen height */
+    /* 6. Use min-height instead of height.
+       This allows the container to grow TALLER than the screen
+       if the content needs it, enabling scrolling without bugs. */
     min-height: 100vh;
+
     width: 100%;
-
-    /* 3. Center items Horizontally (left-to-right) */
     align-items: center;
-
-    /* 4. Center items Vertically (top-to-bottom) */
-    /* 'center' packs them in the middle. 'space-evenly' spreads them out. */
     justify-content: center;
 
-    /* 5. Add a specific gap between the Text div and the Button div */
-    gap: 50px;
+    /* Add padding so top/bottom content isn't touching the browser edges when scrolling */
+    padding: 40px 0;
+
+    gap: 20px;
 }
 
 /* ====================================================*/
 /* ==================/ WELCOME PAGE /==================*/
 /* ====================================================*/
 
-/* The Big Cool Title */
 .game-title {
-    font-family: 'Pirata One', cursive; /* Use the pirate font */
-    font-size: 8rem;  /* Very big text */
-    color: #e6b800;   /* Gold color */
-    margin: 0;        /* Remove default spacing */
-
-    /* IMPORTANT: This adds a black outline/shadow so it's readable */
+    font-family: 'Pirata One', cursive;
+    /* Reduced from 8rem to 5rem to save space */
+    font-size: 5rem;
+    color: #e6b800;
+    margin: 0;
     text-shadow: 4px 4px 0px #000000;
-
-    /* Optional: Slight animation on hover */
-    transition: transform 0.3s;
     cursor: default;
+    line-height: 1; /* Tighter line height */
 }
 
 .game-title:hover {
-    transform: scale(1.05); /* Grows slightly when you mouse over it */
+    transform: scale(1.05);
 }
 
-/* The Subtitle */
 .subtitle {
-    font-size: 1.5rem;
-    color: #ffffff; /* White text */
-    margin-top: 10px;
-    letter-spacing: 2px; /* Spaced out letters look cinematic */
-    text-shadow: 2px 2px 4px #000000; /* Black shadow for readability */
+    font-size: 1.2rem; /* Slightly smaller */
+    color: #ffffff;
+    margin-top: 5px;   /* Reduced margin */
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px #000000;
     text-transform: uppercase;
 }
 
 .start-btn {
-    margin-top: 40px;          /* Space between subtitle and button */
-    padding: 15px 40px;        /* Make the button nice and big */
-    font-family: 'Pirata One', cursive; /* Matches the title font */
-    font-size: 2rem;           /* Large text */
-    color: #ffd700;            /* Gold text */
-
-    /* Button Background (Dark Red/Brown) */
+    margin-top: 25px;       /* Reduced from 40px */
+    padding: 10px 30px;     /* Slightly smaller padding */
+    font-family: 'Pirata One', cursive;
+    font-size: 1.8rem;
+    color: #ffd700;
     background-color: #5a1a1a;
-    border: 3px solid #b8860b; /* Gold border */
-    border-radius: 8px;        /* Slightly rounded corners */
-
-    cursor: pointer;           /* Changes mouse cursor to a hand */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.5); /* Drop shadow for 3D effect */
-    transition: all 0.3s ease; /* Smooth animation for hover */
+    border: 3px solid #b8860b;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
 }
 
-/* Hover Effect: What happens when you mouse over it */
 .start-btn:hover {
-    background-color: #800000; /* Lighter red */
-    transform: scale(1.1);     /* Grow 10% bigger */
-    box-shadow: 0 0 15px #ffd700; /* Glowing gold shadow */
+    background-color: #800000;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #ffd700;
 }
 
-/* Active Effect: What happens when you click it */
 .start-btn:active {
-    transform: scale(0.95);    /* Shrink slightly to feel like a real button press */
+    transform: scale(0.95);
 }
 
 /* =================================================*/
 /* ==================/ CREW PAGE /==================*/
 /* =================================================*/
 
-/* --- Manifest Card Styling --- */
 .manifest-card {
-    background-color: rgba(0, 0, 0, 0.85); /* Dark semi-transparent background */
-    padding: 40px;
-    border: 2px solid #b8860b; /* Gold border */
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 25px; /* Reduced padding from 40px */
+    border: 2px solid #b8860b;
     border-radius: 10px;
-    width: 100%;
-    max-width: 500px; /* Keeps it from getting too wide */
+    width: 90%;      /* Responsive width */
+    max-width: 450px;
     text-align: center;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 }
@@ -110,147 +110,192 @@ body{
 .manifest-title {
     font-family: 'Pirata One', cursive;
     color: #ffd700;
-    font-size: 3rem;
-    margin-bottom: 30px;
+    font-size: 2.5rem; /* Reduced from 3rem */
+    margin-bottom: 20px; /* Reduced margin */
     margin-top: 0;
     text-shadow: 2px 2px 0 #000;
 }
 
-/* --- Input Groups --- */
 .input-group {
-    margin-bottom: 25px;
-    text-align: left; /* Aligns questions to the left */
+    margin-bottom: 15px; /* Compacted spacing */
+    text-align: left;
 }
 
 .input-group label {
     display: block;
     font-family: 'Pirata One', cursive;
     color: #e0e0e0;
-    font-size: 1.5rem;
-    margin-bottom: 5px;
+    font-size: 1.3rem;
+    margin-bottom: 2px;
     letter-spacing: 1px;
 }
 
 .input-group input {
     width: 100%;
-    padding: 10px;
-    font-size: 1.2rem;
-    font-family: 'Arial', sans-serif; /* Readable font for input */
+    padding: 5px 10px; /* Smaller padding */
+    font-size: 1.1rem;
+    font-family: 'Arial', sans-serif;
     color: #ffd700;
     background-color: transparent;
     border: none;
-    border-bottom: 2px solid #5a1a1a; /* Dark red underline */
+    border-bottom: 2px solid #5a1a1a;
     outline: none;
     transition: border-color 0.3s;
 }
 
 .input-group input:focus {
-    border-bottom: 2px solid #ffd700; /* Turns gold when typing */
+    border-bottom: 2px solid #ffd700;
 }
 
-.input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-    font-style: italic;
-}
-
-/* --- Error Text --- */
 .error-text {
     color: #ff4444;
     font-family: sans-serif;
-    min-height: 20px; /* Keeps space so layout doesn't jump */
+    font-size: 0.9rem;
+    min-height: 18px;
+    margin-bottom: 5px;
     font-weight: bold;
 }
 
-/* --- Button Adjustment --- */
 .small-btn {
-    margin-top: 10px;
-    font-size: 1.5rem; /* Slightly smaller than the main title button */
+    margin-top: 5px;
+    font-size: 1.4rem;
     width: 100%;
+    padding: 8px;
 }
 
 /* ========================================================= */
 /* ==================/ CREW MEMBERS PAGE /================== */
 /* ========================================================= */
 
-/* Container for the 3 cards */
+/* ========================================================= */
+/* ==================/ CREW MEMBERS PAGE /================== */
+/* ========================================================= */
+
 .candidates-row {
     display: flex;
     justify-content: center;
-    gap: 30px; /* Space between cards */
+    align-items: center;
+    gap: 30px; /* Slightly more space between cards */
     width: 100%;
     max-width: 1200px;
-    flex-wrap: wrap; /* Wraps to next line on small screens */
 }
 
-/* Individual Pirate Card */
+/* Individual Pirate Card - VERTICAL BUT BIGGER */
 .pirate-card {
     background-color: rgba(0, 0, 0, 0.9);
-    border: 2px solid #5a1a1a; /* Dark Red Border */
+    border: 2px solid #5a1a1a;
     border-radius: 8px;
-    padding: 20px;
-    width: 300px;
+    padding: 15px;
+    width: 280px;         /* Increased width (was 240px) to fit stats side-by-side */
     text-align: center;
     transition: transform 0.3s, border-color 0.3s;
     box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .pirate-card:hover {
-    transform: translateY(-10px); /* Floats up slightly */
-    border-color: #ffd700; /* Border turns gold */
+    transform: translateY(-5px);
+    border-color: #ffd700;
 }
 
-/* Pirate Image */
 .pirate-img {
     width: 100%;
-    height: 300px;
-    object-fit: cover; /* Ensures image fills box without stretching */
+    height: 250px;       /* INCREASED: Was 150px. Now nice and tall. */
+    object-fit: cover;
+    object-position: top;
     border: 1px solid #b8860b;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-/* Text Styling */
 .pirate-name {
     font-family: 'Pirata One', cursive;
     color: #ffd700;
-    font-size: 2rem;
-    margin: 5px 0;
+    font-size: 1.8rem;   /* Slightly bigger text */
+    margin: 2px 0;
+    line-height: 1;
 }
 
 .pirate-alias {
     color: #aaa;
+    font-size: 0.9rem;
     font-style: italic;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
+/* STATS GRID: This splits the 6 stats into 2 columns to save height */
 .stat-list {
-    list-style: none; /* Remove bullet points */
+    display: grid;       /* Grid layout */
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 2px 15px;       /* Gap between columns */
+
+    list-style: none;
     padding: 0;
     color: #e0e0e0;
     font-family: 'Arial', sans-serif;
     text-align: left;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
 }
 
 .stat-list li {
     border-bottom: 1px solid #333;
-    padding: 5px 0;
+    padding: 2px 0;
     display: flex;
     justify-content: space-between;
 }
 
-/* The Recruit Button */
+/* Ensure the Role Specific list stays 1 column if names are long */
+.role-specific-list {
+    display: flex; /* Back to standard list for skills */
+    flex-direction: column;
+    gap: 2px;
+}
+
 .recruit-btn {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
+    margin-top: 10px;
     background-color: #b8860b;
     color: black;
     font-family: 'Pirata One', cursive;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     border: none;
     cursor: pointer;
     transition: background-color 0.2s;
+    border-radius: 4px;
 }
 
 .recruit-btn:hover {
     background-color: #ffd700;
+}
+
+/* ==================/ OTHERS /================== */
+
+.stat-separator {
+    text-align: center;
+    font-family: 'Pirata One', cursive;
+    color: #ffd700;
+    font-size: 1rem;
+    margin: 5px 0; /* Reduced margin */
+    position: relative;
+    letter-spacing: 1px;
+}
+
+.stat-separator::before,
+.stat-separator::after {
+    content: "";
+    display: inline-block;
+    width: 20%;
+    height: 1px;
+    background-color: #5a1a1a;
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
+.special-stat {
+    color: #ffd700;
+    font-weight: bold;
 }

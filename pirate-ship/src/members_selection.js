@@ -1,10 +1,13 @@
-// 1. Define the order of recruitment
 const roles = [
-    { name: "Second", desc: "Your second-in-command. Needs high leadership!" },
-    { name: "Navigator", desc: "Charts the course. Needs high intelligence!" },
-    { name: "Sniper", desc: "Protects the ship from afar. Needs accuracy!" },
-    { name: "Cook", desc: "Keeps morale high. Needs cooking skills!" },
-    // Add other roles here...
+    { name: "Second", desc: "Who will have the honor to be your second?" },
+    { name: "Navigator", desc: "Who will chart your course?" },
+    { name: "Sniper", desc: "Who will watch your back from a distance?" },
+    { name: "Cook", desc: "KWho will keep the crew fed and happy?" },
+    { name: "Archeologist", desc: "Who will uncover the secrets of the past?"},
+    { name: "Doctor", desc: "Who will patch up your wounds?"},
+    { name: "Shipwright", desc: "Who will keep the ship afloat?"},
+    { name: "Musician", desc: "ho will keep the morale high?"},
+    { name: "Helmsman", desc: "Who will steer the ship through the storm?"},
 ];
 
 let currentRoleIndex = 0;
@@ -12,92 +15,169 @@ const container = document.getElementById('candidatesContainer');
 const title = document.getElementById('roleTitle');
 const desc = document.getElementById('roleDesc');
 
-// 2. Start the process
 loadNextRole();
 
-function loadNextRole() {
+// Change function to 'async' so we can wait for the database response
+async function loadNextRole() {
     // Check if we are done
     if (currentRoleIndex >= roles.length) {
-        alert("Crew assembly complete! Setting sail...");
-        // window.location.href = "adventure.html"; // Go to game
+        finalizeCrew(); // Trigger the final save
         return;
     }
 
-    // Update Header
     const currentRole = roles[currentRoleIndex];
     title.innerText = "Recruiting: " + currentRole.name;
     desc.innerText = currentRole.desc;
 
-    // Clear previous cards
-    container.innerHTML = "";
+    // Show a loading text while waiting for Database
+    container.innerHTML = "<h2 style='color:white;'>Searching the taverns...</h2>";
 
-    // Fetch candidates (Simulating your DB call here)
-    const candidates = mockFetchCandidates(currentRole.name);
+    try {
+        // --- REAL DATABASE CALL ---
+        // We ask the Java Server: "Give me 3 random candidates for this role"
+        const response = await fetch(`http://localhost:8080/api/candidates?role=${currentRole.name}`);
 
-    // Create HTML for each candidate
-    candidates.forEach(pirate => {
-        createPirateCard(pirate);
-    });
-}
+        if (!response.ok) {
+            throw new Error(`Server Error: ${response.status}`);
+        }
 
-function createPirateCard(pirate) {
-    // 1. Select Random Image based on Sex
-    const imagePath = getRandomImage(pirate.sex);
+        const candidates = await response.json();
 
-    // 2. Build the HTML Card
-    const card = document.createElement('div');
-    card.className = 'pirate-card';
+        // Clear loading text
+        container.innerHTML = "";
 
-    card.innerHTML = `
+        // Create cards for the real data
+        candidates.forEach(pirate => {
+            createPirateCard(pirate);
+        });
+
+    } catch (error) {
+        console.error("Failed to fetch candidates:", error);
+        container.innerHTML = "<h2 style='color:red;'>Could not find any pirates. Is the Java Server running?</h2>";
+    }
+
+
+    function createPirateCard(pirate) {
+        const imagePath = getRandomImage(pirate.sex);
+        const card = document.createElement('div');
+        card.className = 'pirate-card';
+
+        let roleStatsHTML = '';
+        if (pirate.roleData) {
+            for (const [key, value] of Object.entries(pirate.roleData)) {
+                // Beautify key: "weather_prediction" -> "Weather Prediction"
+                const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                roleStatsHTML += `<li><span>${label}:</span> <span class="special-stat">${value}</span></li>`;
+            }
+        }
+
+        card.innerHTML = `
         <img src="${imagePath}" alt="Pirate Portrait" class="pirate-img">
         <h2 class="pirate-name">${pirate.name}</h2>
         <p class="pirate-alias">"${pirate.alias}"</p>
         
         <ul class="stat-list">
-            <li><span>Power:</span> <span>${pirate.stats.power}</span></li>
-            <li><span>Skill:</span> <span>${pirate.stats.skill}</span></li>
-            <li><span>Loyalty:</span> <span>${pirate.stats.loyalty}</span></li>
+            <li><span>Strength:</span> <span>${pirate.stats.strength}</span></li>
+            <li><span>Agility:</span> <span>${pirate.stats.agility}</span></li>
+            <li><span>Endurance:</span> <span>${pirate.stats.endurance}</span></li>
+            <li><span>Intelligence:</span> <span>${pirate.stats.intelligence}</span></li>
+            <li><span>Charisma:</span> <span>${pirate.stats.charisma}</span></li>
+            <li><span>Willpower:</span> <span>${pirate.stats.willpower}</span></li>
+        </ul>
+
+        <div class="stat-separator">Class Skills</div>
+
+        <ul class="stat-list role-specific-list">
+            ${roleStatsHTML}
         </ul>
 
         <button class="recruit-btn">Recruit</button>
     `;
 
-    // 3. Add Click Event to the Button
-    card.querySelector('.recruit-btn').addEventListener('click', () => {
-        console.log(`Recruited ${pirate.name} as ${roles[currentRoleIndex].name}`);
+        card.querySelector('.recruit-btn').addEventListener('click', () => {
+            const currentRoleName = roles[currentRoleIndex].name.toLowerCase();
 
-        // TODO: Send selection to your Java Backend here
+            console.log(`Recruited ${pirate.name} as ${currentRoleName}`);
 
-        // Move to next role
-        currentRoleIndex++;
-        loadNextRole();
-    });
+            localStorage.setItem(`selected_${currentRoleName}`, JSON.stringify(pirate));
 
-    // 4. Add to page
-    container.appendChild(card);
-}
+            currentRoleIndex++;
+            loadNextRole();
+        });
 
-// --- Helper Functions ---
-
-function getRandomImage(sex) {
-    // Random number between 1 and 5
-    const randomNum = Math.floor(Math.random() * 5) + 1;
-
-    if (sex === 'F') {
-        return `img/friendly/fem${randomNum}.png`;
-    } else {
-        return `img/friendly/male${randomNum}.png`;
+        container.appendChild(card);
     }
-}
 
-// SIMULATION: This replaces your database call for now
-function mockFetchCandidates(role) {
-    // In real life, this would be: fetch('/api/getCandidates?role=' + role)
+    function finalizeCrew() {
+        container.innerHTML = "<h2 style='color:gold; text-align:center;'>Signing the logbook...</h2>";
 
-    // Generating 3 fake pirates
-    return [
-        { name: "Barnaby", alias: "The Rusty", sex: "M", stats: { power: 85, skill: 40, loyalty: 90 } },
-        { name: "Eliza", alias: "Stormborn", sex: "F", stats: { power: 70, skill: 95, loyalty: 60 } },
-        { name: "Grog", alias: "Big Grog", sex: "M", stats: { power: 99, skill: 10, loyalty: 50 } }
-    ];
+        // 1. Basic Info
+        const finalData = {
+            captainName: localStorage.getItem("captainName"),
+            alias: localStorage.getItem("captainAlias"),
+            crewName: localStorage.getItem("crewName"),
+        };
+
+        // 2. Loop through every recruited pirate in LocalStorage
+        roles.forEach(role => {
+            const prefix = role.name.toLowerCase(); // e.g., "second", "navigator"
+            const pirateJson = localStorage.getItem(`selected_${prefix}`);
+
+            if (pirateJson) {
+                const pirate = JSON.parse(pirateJson);
+
+                // A. Basic Pirate Data
+                finalData[`${prefix}_name`] = pirate.name;
+                finalData[`${prefix}_alias`] = pirate.alias;
+                finalData[`${prefix}_sex`] = pirate.sex;
+
+                // B. Send ALL Base Stats (Strength, Agility, etc.)
+                // The Java parser looks for keys like "navigator_strength", "cook_agility"
+                for (const [statKey, statValue] of Object.entries(pirate.stats)) {
+                    finalData[`${prefix}_${statKey}`] = statValue;
+                }
+
+                // C. Send ALL Role Specific Data (Navigation, Cooking, etc.)
+                // The Java parser looks for "navigator_navigation", "cook_cooking"
+                if (pirate.roleData) {
+                    for (const [roleKey, roleValue] of Object.entries(pirate.roleData)) {
+                        finalData[`${prefix}_${roleKey}`] = roleValue;
+                    }
+                }
+            }
+        });
+
+        // 3. Send to Java Server
+        fetch('http://localhost:8080/api/create-crew', { // Make sure this matches your Java Handler path!
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(finalData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    container.innerHTML = "<h2 style='color:red'>Failed to set sail!</h2>";
+                } else {
+                    alert("Success! " + data.message);
+                    // Optional: Redirect to game page
+                    // window.location.href = "game.html";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                container.innerHTML = "<h2 style='color:red'>Server Connection Failed</h2>";
+            });
+    }
+
+    function getRandomImage(sex) {
+        // Random number between 1 and 5
+        const randomNum = Math.floor(Math.random() * 5) + 1;
+
+        if (sex === 'F') {
+            return `img/friendly/fem${randomNum}.png`;
+        } else {
+            return `img/friendly/male${randomNum}.png`;
+        }
+    }
 }

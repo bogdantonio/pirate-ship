@@ -230,7 +230,7 @@ public class SelectQuery {
     public Sniper selectSniper() throws SQLException {
         Sniper sniper = null;
 
-        String query = "SELECT s.sniper_id, s.accuracy, s.weapon_rage, s.critical_chance, " +
+        String query = "SELECT s.sniper_id, s.accuracy, s.weapon_range, s.critical_chance, " +
                 "p.pirate_id, p.name, p.alias, p.sex, p.role, " +
                 "st.stat_set_id, st.strength, st.agility, st.endurance, " +
                 "st.intelligence, st.charisma, st.willpower " +
@@ -263,7 +263,7 @@ public class SelectQuery {
                     statSet,
                     rs.getInt("sniper_id"),
                     rs.getInt("accuracy"),
-                    rs.getInt("weapon_rage"),
+                    rs.getInt("weapon_range"),
                     rs.getInt("critical_chance")
             );
         }
