@@ -28,9 +28,10 @@ public class JavaAPIServer {
         // --- 1. Define API Endpoints ---
         server.createContext("/api/create-crew", new CreateCrewHandler());
         server.createContext("/api/candidates", new CandidatesHandler());
+        server.createContext("/api/adventure/start", new AdventureHandler());
+        server.createContext("/api/adventure/end", new EndAdventureHandler());
 
         // --- 2. Global CORS Handler ---
-        // This ensures your HTML file can talk to this Java server without security errors.
         server.createContext("/", (exchange) -> {
             String response = "404 Not Found";
             exchange.sendResponseHeaders(404, response.length());
@@ -44,6 +45,9 @@ public class JavaAPIServer {
         System.out.println("API Server started on port " + port);
     }
 
+    // =================================================================
+    // HANDLER 1: CREATE CREW
+    // =================================================================
     static class CreateCrewHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -53,16 +57,12 @@ public class JavaAPIServer {
 
             if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
                 try {
-                    // 1. Parse the flattened JSON
                     String requestBody = new String(exchange.getRequestBody().readAllBytes());
                     Map<String, String> data = parseJsonToMap(requestBody);
 
-                    // 2. Create the Crew Skeleton
-                    // We pass '0' for ID initially; the DB will generate it.
                     Crew crew = new Crew(0, data.get("crewName"), data.get("captainName"), null, data.get("alias"));
                     crew.setCrewMembers(new EnumMap<>(Role.class));
 
-                    // 3. Instantiate Members using the Factory Method
                     crew.addCrewMember(createSpecificPirate(data, Role.SECOND, "second"));
                     crew.addCrewMember(createSpecificPirate(data, Role.NAVIGATOR, "navigator"));
                     crew.addCrewMember(createSpecificPirate(data, Role.SNIPER, "sniper"));
@@ -73,11 +73,12 @@ public class JavaAPIServer {
                     crew.addCrewMember(createSpecificPirate(data, Role.MUSICIAN, "musician"));
                     crew.addCrewMember(createSpecificPirate(data, Role.HELMSMAN, "helmsman"));
 
-                    // 4. Save to Database
                     InsertQuery insertQuery = new InsertQuery();
-                    insertQuery.insertFullCrewTransaction(crew);
 
-                    response = "{\"message\": \"The " + crew.getCrewName() + " has set sail!\"}";
+                    // FIX: Call this ONLY ONCE and capture the ID
+                    int newCrewId = insertQuery.insertFullCrewTransaction(crew);
+
+                    response = String.format("{\"message\": \"Set Sail!\", \"crewId\": %d}", newCrewId);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -95,7 +96,6 @@ public class JavaAPIServer {
         }
 
         private Pirate createSpecificPirate(Map<String, String> data, Role role, String prefix) {
-
             PirateStatSet stats = new PirateStatSet(0,
                     parseInt(data.get(prefix + "_strength")),
                     parseInt(data.get(prefix + "_agility")),
@@ -108,64 +108,55 @@ public class JavaAPIServer {
             String name = data.get(prefix + "_name");
             String alias = data.get(prefix + "_alias");
             String sex = data.get(prefix + "_sex");
-            int id = 0; // Placeholder, set by DB later
+            int id = 0;
 
             switch (role) {
-                case SECOND: //
+                case SECOND:
                     return new Second(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_leadership")),
                             parseInt(data.get(prefix + "_tactics")),
                             parseInt(data.get(prefix + "_morale_boost")));
-
-                case NAVIGATOR: //
+                case NAVIGATOR:
                     return new Navigator(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_navigation")),
                             parseInt(data.get(prefix + "_weather_prediction")),
                             parseInt(data.get(prefix + "_map_reading")));
-
-                case SNIPER: //
+                case SNIPER:
                     return new Sniper(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_accuracy")),
                             parseInt(data.get(prefix + "_weapon_range")),
                             parseInt(data.get(prefix + "_critical_chance")));
-
-                case COOK: //
+                case COOK:
                     return new Cook(id, role, alias, name, sex, stats,
-                            parseInt(data.get(prefix + "_morale_impact")), // Note: Constructor arg order matters!
+                            parseInt(data.get(prefix + "_morale_impact")),
                             0,
                             parseInt(data.get(prefix + "_cooking")),
                             parseInt(data.get(prefix + "_meal_quality")));
-
-                case DOCTOR: //
+                case DOCTOR:
                     return new Doctor(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_medical_ability")),
                             parseInt(data.get(prefix + "_healing_speed")),
                             parseInt(data.get(prefix + "_diagnosis")));
-
-                case ARCHEOLOGIST: //
+                case ARCHEOLOGIST:
                     return new Archeologist(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_trap_detection")),
                             parseInt(data.get(prefix + "_digging")),
                             parseInt(data.get(prefix + "_artifact_knowledge")));
-
-                case SHIPWRIGHT: //
+                case SHIPWRIGHT:
                     return new Shipwright(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_repair")),
                             parseInt(data.get(prefix + "_construction")),
                             parseInt(data.get(prefix + "_materials")));
-
-                case MUSICIAN: //
+                case MUSICIAN:
                     return new Musician(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_music")),
                             parseInt(data.get(prefix + "_inspiration")),
                             parseInt(data.get(prefix + "_buff_strength")));
-
-                case HELMSMAN: //
+                case HELMSMAN:
                     return new Helmsman(id, role, alias, name, sex, stats, 0,
                             parseInt(data.get(prefix + "_storm_riding")),
                             parseInt(data.get(prefix + "_precision")),
                             parseInt(data.get(prefix + "_maneuvering")));
-
                 default: return null;
             }
         }
@@ -175,23 +166,22 @@ public class JavaAPIServer {
         }
     }
 
+    // =================================================================
+    // HANDLER 2: CANDIDATES
+    // =================================================================
     static class CandidatesHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             handleCORS(exchange);
-
             String response;
             int statusCode = 200;
 
             if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
-                // 1. Extract 'role' from query (e.g. ?role=Second)
                 String query = exchange.getRequestURI().getQuery();
                 String role = getQueryParam(query, "role");
 
                 if (role != null) {
-                    // 2. Get data from DB
                     List<Map<String, Object>> candidates = retrieveRandomCandidates(role);
-                    // 3. Convert to JSON
                     response = convertListMapToJson(candidates);
                 } else {
                     statusCode = 400;
@@ -204,116 +194,221 @@ public class JavaAPIServer {
                 statusCode = 405;
                 response = "{\"error\": \"Method Not Allowed\"}";
             }
-
             sendResponse(exchange, statusCode, response);
         }
     }
 
-    // retrieves 3 random candidates for a specific role
+    // =================================================================
+    // HANDLER 3: ADVENTURE START
+    // =================================================================
+    static class AdventureHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            handleCORS(exchange);
+
+            if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                try {
+                    // FIX: Removed duplicate logic block here
+                    Map<String, Object> result = retrieveFullAdventure();
+
+                    // Convert the wrapper map to JSON manually
+                    String jsonEvents = convertListMapToJson((List<Map<String, Object>>) result.get("events"));
+                    String response = String.format("{\"eventSetId\": %s, \"events\": %s}", result.get("set_id"), jsonEvents);
+
+                    sendResponse(exchange, 200, response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sendResponse(exchange, 500, "{\"error\": \"Server Error\"}");
+                }
+            }
+            else if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendResponse(exchange, 204, "");
+            }
+            else {
+                sendResponse(exchange, 405, "{}");
+            }
+        }
+    }
+
+    // =================================================================
+    // HANDLER 4: ADVENTURE END
+    // =================================================================
+    static class EndAdventureHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            handleCORS(exchange);
+            if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                try {
+                    String body = new String(exchange.getRequestBody().readAllBytes());
+                    Map<String, String> data = parseJsonToMap(body);
+
+                    int crewId = Integer.parseInt(data.get("crewId"));
+                    int setId = Integer.parseInt(data.get("eventSetId"));
+                    int success = Integer.parseInt(data.get("success"));
+                    int fail = Integer.parseInt(data.get("fail"));
+
+                    InsertQuery iq = new InsertQuery();
+                    iq.insertAdventure(crewId, setId, success, fail);
+
+                    sendResponse(exchange, 200, "{\"message\": \"History Recorded\"}");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sendResponse(exchange, 500, "{\"error\": \"Save failed\"}");
+                }
+            } else if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendResponse(exchange, 204, "");
+            }
+        }
+    }
+
+    // =================================================================
+    // DB METHODS
+    // =================================================================
+
+    private static Map<String, Object> retrieveFullAdventure() {
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, Object>> fullEvents = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(DBC.url, DBC.user, DBC.password)) {
+            // Get Set ID and Event IDs
+            String setQuery = "SELECT * FROM public.event_sets ORDER BY RANDOM() LIMIT 1";
+            List<Integer> eventIds = new ArrayList<>();
+
+            try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(setQuery)) {
+                if (rs.next()) {
+                    result.put("set_id", rs.getInt("event_set_id")); // Capture Set ID
+                    for(int i=1; i<=10; i++) eventIds.add(rs.getInt("event" + i + "_id"));
+                }
+            }
+
+            for (int id : eventIds) {
+                String typeQuery = "SELECT event_type, enemy_event_id, subclass_event_id FROM public.events WHERE event_id = ?";
+                try (PreparedStatement ps = conn.prepareStatement(typeQuery)) {
+                    ps.setInt(1, id);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            String type = rs.getString("event_type");
+                            Map<String, Object> eventData = new HashMap<>();
+                            eventData.put("type", type);
+
+                            if ("ENEMY".equals(type)) {
+                                int enemyEventId = rs.getInt("enemy_event_id");
+                                fetchEnemyEventDetails(conn, enemyEventId, eventData);
+                            } else {
+                                int subclassEventId = rs.getInt("subclass_event_id");
+                                fetchSubclassEventDetails(conn, subclassEventId, eventData);
+                            }
+                            fullEvents.add(eventData);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+
+        result.put("events", fullEvents);
+        return result;
+    }
+
+    private static void fetchEnemyEventDetails(Connection conn, int id, Map<String, Object> data) throws SQLException {
+        String sql = "SELECT ee.prompt, e.name, e.alias, e.power, e.faction, e.sex " +
+                "FROM public.enemies_events ee " +
+                "JOIN public.enemies e ON ee.enemy_id = e.enemy_id " +
+                "WHERE ee.enemy_event_id = ?";
+        try(PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try(ResultSet rs = ps.executeQuery()) {
+                if(rs.next()) {
+                    data.put("prompt", rs.getString("prompt"));
+                    data.put("enemyName", rs.getString("name"));
+                    data.put("enemyAlias", rs.getString("alias"));
+                    data.put("enemyPower", rs.getInt("power"));
+                    data.put("enemyFaction", rs.getString("faction"));
+                    data.put("enemySex", rs.getString("sex"));
+                }
+            }
+        }
+    }
+
+    private static void fetchSubclassEventDetails(Connection conn, int id, Map<String, Object> data) throws SQLException {
+        String sql = "SELECT subclass, prompt, required_stat1, required_stat2, required_stat3 " +
+                "FROM public.subclass_events WHERE subclass_event_id = ?";
+        try(PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try(ResultSet rs = ps.executeQuery()) {
+                if(rs.next()) {
+                    data.put("subclassRole", rs.getString("subclass"));
+                    data.put("prompt", rs.getString("prompt"));
+                    data.put("req1", rs.getInt("required_stat1"));
+                    data.put("req2", rs.getInt("required_stat2"));
+                    data.put("req3", rs.getInt("required_stat3"));
+                }
+            }
+        }
+    }
+
     private static List<Map<String, Object>> retrieveRandomCandidates(String role) {
         List<Map<String, Object>> list = new ArrayList<>();
-
         String query = "";
 
-        // 1. Build the SQL Query based on the role
-        // Note: We use the role-specific table (e.g., 'seconds') and join it
-        // with the generic 'pirates' and 'stat_sets' tables to get all the data.
         switch (role.toUpperCase()){
             case "SECOND":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " leadership, tactics, morale_boost," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.seconds" +
-                        " JOIN public.pirates p on seconds.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, leadership, tactics, morale_boost, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.seconds JOIN public.pirates p on seconds.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "NAVIGATOR":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " navigation, weather_prediction, map_reading," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.navigators" +
-                        " JOIN public.pirates p on navigators.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, navigation, weather_prediction, map_reading, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.navigators JOIN public.pirates p on navigators.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "SNIPER":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " accuracy, weapon_range, critical_chance," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.snipers" +
-                        " JOIN public.pirates p on snipers.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, accuracy, weapon_range, critical_chance, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.snipers JOIN public.pirates p on snipers.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "COOK":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " cooking, meal_quality, morale_impact," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.cooks" +
-                        " JOIN public.pirates p on cooks.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, cooking, meal_quality, morale_impact, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.cooks JOIN public.pirates p on cooks.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "ARCHEOLOGIST":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " artifact_knowledge, digging, trap_detection," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.archeologists" +
-                        " JOIN public.pirates p on archeologists.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, artifact_knowledge, digging, trap_detection, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.archeologists JOIN public.pirates p on archeologists.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "DOCTOR":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " medical_ability, healing_speed, diagnosis," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.doctors" +
-                        " JOIN public.pirates p on doctors.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, medical_ability, healing_speed, diagnosis, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.doctors JOIN public.pirates p on doctors.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "SHIPWRIGHT":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " repair, construction, materials," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.shipwrights" +
-                        " JOIN public.pirates p on shipwrights.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, repair, construction, materials, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.shipwrights JOIN public.pirates p on shipwrights.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "MUSICIAN":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " music, inspiration, buff_strength," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.musicians" +
-                        " JOIN public.pirates p on musicians.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, music, inspiration, buff_strength, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.musicians JOIN public.pirates p on musicians.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
             case "HELMSMAN":
-                query = "SELECT p.name, p.alias, p.sex," +
-                        " maneuvering, precision, storm_riding," +
-                        " ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower" +
-                        " FROM public.helmsmen" +
-                        " JOIN public.pirates p on helmsmen.pirate_id = p.pirate_id" +
-                        " JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id" +
-                        " ORDER BY random()" +
-                        " LIMIT 3";
+                query = "SELECT p.name, p.alias, p.sex, maneuvering, precision, storm_riding, " +
+                        "ss.strength, ss.agility, ss.endurance, ss.intelligence, ss.charisma, ss.willpower " +
+                        "FROM public.helmsmen JOIN public.pirates p on helmsmen.pirate_id = p.pirate_id " +
+                        "JOIN public.stat_sets ss on p.stat_set = ss.stat_set_id ORDER BY random() LIMIT 3";
                 break;
         }
 
         try (Connection conn = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
              PreparedStatement ps = conn.prepareStatement(query)) {
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> pirate = new HashMap<>();
@@ -321,21 +416,15 @@ public class JavaAPIServer {
                     pirate.put("alias", rs.getString("alias"));
                     pirate.put("sex", rs.getString("sex"));
 
-                    // --- FIX HERE: Use "strength", NOT "power" ---
                     Map<String, Integer> stats = new HashMap<>();
-                    stats.put("strength", rs.getInt("strength")); // Fixed
+                    stats.put("strength", rs.getInt("strength"));
                     stats.put("agility", rs.getInt("agility"));
                     stats.put("endurance", rs.getInt("endurance"));
                     stats.put("intelligence", rs.getInt("intelligence"));
                     stats.put("charisma", rs.getInt("charisma"));
                     stats.put("willpower", rs.getInt("willpower"));
-
-                    // Optional: Calculate 'Power' for frontend display if needed
-                    stats.put("power", (stats.get("strength") + stats.get("endurance")) / 2);
-
                     pirate.put("stats", stats);
 
-                    // --- Extract Role Specific Data ---
                     Map<String, Integer> roleData = new HashMap<>();
                     switch (role.toUpperCase()) {
                         case "SECOND":
@@ -384,53 +473,17 @@ public class JavaAPIServer {
                             roleData.put("storm_riding", rs.getInt("storm_riding"));
                             break;
                     }
-
                     pirate.put("roleData", roleData);
                     list.add(pirate);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        } catch (SQLException e) { e.printStackTrace(); }
         return list;
     }
 
-    // retrieve the 10 events of a random event set
-    private static List<Map<String, Object>> retrieveRandomEventSet() {
-        List<Map<String, Object>> list = new ArrayList<>();
-
-        String query = "SELECT event1_id, event2_id, event3_id, event4_id, event5_id," +
-                " event6_id, event7_id, event8_id, event9_id, event10_id" +
-                " FROM public.event_sets ORDER BY RANDOM() LIMIT 1";
-
-        try(Connection conn = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
-            PreparedStatement ps = conn.prepareStatement(query)) {
-
-            try(ResultSet rs = ps.executeQuery()){
-                while(rs.next()){
-                    Map<String, Object> events = new HashMap<>();
-                    events.put("event1", rs.getString("event1_id"));
-                    events.put("event2", rs.getString("event2_id"));
-                    events.put("event3", rs.getString("event3_id"));
-                    events.put("event4", rs.getString("event4_id"));
-                    events.put("event5", rs.getString("event5_id"));
-                    events.put("event6", rs.getString("event6_id"));
-                    events.put("event7", rs.getString("event7_id"));
-                    events.put("event8", rs.getString("event8_id"));
-                    events.put("event9", rs.getString("event9_id"));
-                    events.put("event10", rs.getString("event10_id"));
-
-                    list.add(events);
-                }
-            }
-
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
+    // =================================================================
+    // UTILS
+    // =================================================================
 
     private static void handleCORS(HttpExchange exchange) {
         Headers headers = exchange.getResponseHeaders();
@@ -441,10 +494,8 @@ public class JavaAPIServer {
 
     private static void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
         if (statusCode == 204) {
-            // -1 tells the server: "No body coming, just headers"
             exchange.sendResponseHeaders(statusCode, -1);
         } else {
-            // For 200, 404, etc., we send the length and the body
             byte[] bytes = response.getBytes();
             exchange.sendResponseHeaders(statusCode, bytes.length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -453,23 +504,20 @@ public class JavaAPIServer {
         }
     }
 
-    // Manual JSON Parser (Simple key:value pairs only)
     private static Map<String, String> parseJsonToMap(String json) {
         Map<String, String> map = new HashMap<>();
         json = json.trim().replace("{", "").replace("}", "");
+        if (json.isEmpty()) return map;
         String[] pairs = json.split(",");
         for (String pair : pairs) {
             String[] entry = pair.split(":");
             if (entry.length >= 2) {
-                String key = entry[0].trim().replace("\"", "");
-                String value = entry[1].trim().replace("\"", "");
-                map.put(key, value);
+                map.put(entry[0].trim().replace("\"", ""), entry[1].trim().replace("\"", ""));
             }
         }
         return map;
     }
 
-    // Manual JSON Builder for Lists
     private static String convertListMapToJson(List<Map<String, Object>> list) {
         StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < list.size(); i++) {
@@ -480,22 +528,18 @@ public class JavaAPIServer {
         return json.toString();
     }
 
-    // Manual JSON Builder for Single Object (Handles nested Maps)
     private static String convertMapToJson(Map<String, Object> map) {
         StringBuilder json = new StringBuilder("{");
         int count = 0;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             json.append("\"").append(entry.getKey()).append("\":");
-
             if (entry.getValue() instanceof String) {
                 json.append("\"").append(entry.getValue()).append("\"");
             } else if (entry.getValue() instanceof Map) {
-                // Recursively handle nested stats map
                 json.append(convertMapToJson((Map<String, Object>) entry.getValue()));
             } else {
                 json.append(entry.getValue());
             }
-
             if (count < map.size() - 1) json.append(",");
             count++;
         }

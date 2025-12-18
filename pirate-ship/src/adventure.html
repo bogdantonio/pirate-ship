@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Adventure</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="adventure-container" id="gameArea">
+
+            <div class="event-card-section" id="leftPanel">
+            </div>
+
+            <div class="event-prompt-section" id="rightPanel">
+                <div id="resultOverlay" class="result-overlay">
+                    <h1 id="resultTitle" class="result-title">SUCCESS</h1>
+                    <p id="resultDesc" style="color:#aaa; font-size:1.2rem; margin-bottom:20px;">You handled the situation perfectly.</p>
+                    <button class="action-btn" onclick="nextEvent()">Continue</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="adventure.js"></script>
+</body>
+</html>

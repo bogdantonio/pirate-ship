@@ -56,7 +56,6 @@ async function loadNextRole() {
         container.innerHTML = "<h2 style='color:red;'>Could not find any pirates. Is the Java Server running?</h2>";
     }
 
-
     function createPirateCard(pirate) {
         const imagePath = getRandomImage(pirate.sex);
         const card = document.createElement('div');
@@ -111,14 +110,12 @@ async function loadNextRole() {
     function finalizeCrew() {
         container.innerHTML = "<h2 style='color:gold; text-align:center;'>Signing the logbook...</h2>";
 
-        // 1. Basic Info
         const finalData = {
             captainName: localStorage.getItem("captainName"),
             alias: localStorage.getItem("captainAlias"),
             crewName: localStorage.getItem("crewName"),
         };
 
-        // 2. Loop through every recruited pirate in LocalStorage
         roles.forEach(role => {
             const prefix = role.name.toLowerCase(); // e.g., "second", "navigator"
             const pirateJson = localStorage.getItem(`selected_${prefix}`);
@@ -132,13 +129,11 @@ async function loadNextRole() {
                 finalData[`${prefix}_sex`] = pirate.sex;
 
                 // B. Send ALL Base Stats (Strength, Agility, etc.)
-                // The Java parser looks for keys like "navigator_strength", "cook_agility"
                 for (const [statKey, statValue] of Object.entries(pirate.stats)) {
                     finalData[`${prefix}_${statKey}`] = statValue;
                 }
 
                 // C. Send ALL Role Specific Data (Navigation, Cooking, etc.)
-                // The Java parser looks for "navigator_navigation", "cook_cooking"
                 if (pirate.roleData) {
                     for (const [roleKey, roleValue] of Object.entries(pirate.roleData)) {
                         finalData[`${prefix}_${roleKey}`] = roleValue;
@@ -147,8 +142,7 @@ async function loadNextRole() {
             }
         });
 
-        // 3. Send to Java Server
-        fetch('http://localhost:8080/api/create-crew', { // Make sure this matches your Java Handler path!
+        fetch('http://localhost:8080/api/create-crew', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(finalData)
@@ -159,9 +153,14 @@ async function loadNextRole() {
                     alert("Error: " + data.error);
                     container.innerHTML = "<h2 style='color:red'>Failed to set sail!</h2>";
                 } else {
-                    alert("Success! " + data.message);
-                    // Optional: Redirect to game page
-                    // window.location.href = "game.html";
+                    // --- CRITICAL STEP: Save the Crew ID ---
+                    // You need this ID to save the Adventure result later!
+                    if (data.crewId) {
+                        localStorage.setItem("crewId", data.crewId);
+                    }
+
+                    // alert("Success! " + data.message);
+                    window.location.href = "start_adventure.html";
                 }
             })
             .catch(err => {

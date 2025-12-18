@@ -60,16 +60,16 @@ public class InsertQuery {
     /* ----------------------------------- USED FOR INTERFACE IMPLEMENTATION ---------------------------- */
 
     // The Main Entry Point for saving the Crew
-    public void insertFullCrewTransaction(Crew crew) throws SQLException {
+    public int insertFullCrewTransaction(Crew crew) throws SQLException {
         Connection conn = null;
         PreparedStatement psCrew = null;
+        int generatedCrewId = -1;
 
         try {
             conn = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
-            conn.setAutoCommit(false); // 1. Start Transaction
+            conn.setAutoCommit(false);
 
-            // 2. Insert Every Member (StatSet -> Pirate -> Role Table)
-            // This updates the Java Objects with their new database IDs
+            // ... (Insert Members Logic stays the same) ...
             insertSecond(conn, crew.getSecond());
             insertNavigator(conn, crew.getNavigator());
             insertSniper(conn, crew.getSniper());
@@ -80,18 +80,17 @@ public class InsertQuery {
             insertMusician(conn, crew.getMusician());
             insertHelmsman(conn, crew.getHelmsman());
 
-            // 3. Insert the Crew (Now that we have all the IDs)
+            // 2. UPDATE: Add 'RETURNING crew_id'
             String query = "INSERT into public.crews (captain, crew_power, crew_name, captain_alias, " +
                     "second, navigator, sniper, cook, doctor, archeologist, shipwright, musician, helmsman) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING crew_id";
 
             psCrew = conn.prepareStatement(query);
+            // ... (Set all parameters 1-13 as before) ...
             psCrew.setString(1, crew.getCaptain());
             psCrew.setInt(2, (int) crew.getCrewPower());
             psCrew.setString(3, crew.getCrewName());
             psCrew.setString(4, crew.getCaptainAlias());
-
-            // Link the newly created role IDs
             psCrew.setInt(5, crew.getSecond().getSecondId());
             psCrew.setInt(6, crew.getNavigator().getNavigatorId());
             psCrew.setInt(7, crew.getSniper().getSniperId());
@@ -102,17 +101,37 @@ public class InsertQuery {
             psCrew.setInt(12, crew.getMusician().getMusicianId());
             psCrew.setInt(13, crew.getHelmsman().getHelmsmanId());
 
-            psCrew.executeUpdate();
+            // 3. UPDATE: Execute and Get ID
+            try (ResultSet rs = psCrew.executeQuery()) {
+                if (rs.next()) {
+                    generatedCrewId = rs.getInt(1);
+                }
+            }
 
-            conn.commit(); // 4. Commit Transaction
-            System.out.println("Crew successfully registered.");
+            conn.commit();
+            return generatedCrewId; // Return the new ID!
 
         } catch (SQLException e) {
-            if (conn != null) conn.rollback(); // Rollback on error
+            if (conn != null) conn.rollback();
             throw e;
         } finally {
             if (psCrew != null) psCrew.close();
             if (conn != null) conn.close();
+        }
+    }
+
+    public void insertAdventure(int crewId, int eventSetId, int success, int fail) throws SQLException {
+        String sql = "INSERT INTO public.adventures (crew_id, event_set, successful_events, failed_events) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DBC.url, DBC.user, DBC.password);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, crewId);
+            ps.setInt(2, eventSetId);
+            ps.setInt(3, success);
+            ps.setInt(4, fail);
+
+            ps.executeUpdate();
         }
     }
 
