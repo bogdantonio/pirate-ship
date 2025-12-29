@@ -10,11 +10,11 @@
 ---
 
 ## 📑 Table of Contents
-- [About](#about)
-- [Running the App](#running-the-app)
-- [How to Play](#how-to-play)
-- [Project Structure](#project-structure)
-- [User Interface](#user-interface)
+- [About](#-about)
+- [Running the App](#%EF%B8%8F-running-the-app)
+- [How to Play](#-how-to-play)
+- [Project Structure](#-project-structure)
+- [User Interface](#%EF%B8%8F-user-interface)
 
 ---
 
