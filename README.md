@@ -2,6 +2,11 @@
 
 **Booze & Guns** is a text-based pirate adventure game where you assemble a crew, face dangerous encounters, and attempt to survive a perilous journey in search of legendary treasure.
 
+![Static Badge](https://img.shields.io/badge/4y3l-oop_project-%23E34F1E)
+![GitHub last commit](https://img.shields.io/github/last-commit/bogdantonio/pirate-ship)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/bogdantonio/pirate-ship)
+![GitHub repo size](https://img.shields.io/github/repo-size/bogdantonio/pirate-ship)
+
 ---
 
 ## 📑 Table of Contents
