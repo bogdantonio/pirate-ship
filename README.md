@@ -8,19 +8,19 @@
 - [About](#about)
 - [Running the App](#running-the-app)
 - [How to Play](#how-to-play)
-- [Packages and Classes](#packages-and-classes)
+- [Project Structure](#project-structure)
 - [User Interface](#user-interface)
 
 ---
 
 ## 📖 About
 
-**Booze & Guns** is a text-based pirate adventure game built using the **Java programming language**.  
+To build the game the **Java programming language** was used.  
 It uses **PostgreSQL** for database implementation, while **HTML, CSS, and JavaScript** are used to create a clean and interactive user interface.
 
-### 🏴‍☠️ Premise
+### 🏴‍☠️ What is the premise of the game?
 
-Your aim is to become the captain of a great pirate crew in search of the greatest treasure of them all. To do this, you must recruit crewmates worthy of sailing alongside you and suited to your needs. Be wary — some are more skilled than others.
+Your aim is to become the captain of a great pirate crew that seeks the greatest treasure of them all. To do this, you have to find crewmates worthy enough to sail alongside you and suited to your needs. Be wary-some of them are more skilled than others. 
 
 Once the crew has been assembled, the adventure begins. Throughout the journey, your crew will face various encounters. These take one of two forms:
 
@@ -72,11 +72,7 @@ Once your crew is assembled, press **“Set Sail”** to begin the adventure.
 
 ---
 
-## 🧱 Packages and Classes
-
-> **Naming convention:**  
-> `camelCase` – packages  
-> `PascalCase` – classes  
+## 🧱 Project Structure
 
 ### 📦 adventure
 - `Adventure` – Runs the adventure using a `Crew` and an `EventSet`
