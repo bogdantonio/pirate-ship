@@ -1,4 +1,4 @@
-# ☠️ Booze & Guns 🏴‍☠️
+<img width="700" height="150" alt="🍻Booze_ _Guns🔫" src="https://github.com/user-attachments/assets/7954ddae-ebe8-4b23-a73f-29ed6a4242b8" />
 
 **Booze & Guns** is a text-based pirate adventure game where you assemble a crew, face dangerous encounters, and attempt to survive a perilous journey in search of legendary treasure.
 
